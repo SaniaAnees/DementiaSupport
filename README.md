@@ -7,12 +7,12 @@ Offline-first cognitive care for dementia patients + caregivers.
 | Branch | Purpose |
 |--------|---------|
 | **`main`** | Product rebuild starts here (clean slate). |
-| **`white-app-vite`** | Frozen Vite/Capacitor demo (`localhost:5173`) for fallback demos. |
+| **`vite-app`** | Frozen Vite/Capacitor demo (`localhost:5173`) for fallback demos. |
 
-### Run the old white Vite demo
+### Run the old Vite demo
 
 ```bash
-git checkout white-app-vite
+git checkout vite-app
 cd app
 npm install
 npm run dev
