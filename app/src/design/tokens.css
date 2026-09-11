@@ -1,0 +1,89 @@
+/**
+ * DESIGN TOKENS — edit this file to restyle the whole product.
+ * Screens should use var(--*) only; avoid hard-coded colors in JSX when possible.
+ */
+:root {
+  /* ——— Surfaces (caregiver / family) ——— */
+  --bg: #fafbfc;
+  --bg-soft: #f0f3f7;
+  --sheet: #ffffff;
+  --ink: #0c1222;
+  --ink-2: #4a5568;
+  --ink-3: #8a94a6;
+  --line: #e8edf3;
+  --line-2: #d7dee8;
+  --fill: #f3f6fa;
+
+  /* ——— Brand / semantic ——— */
+  --vital: #00a88e;
+  --vital-deep: #007a68;
+  --vital-glow: #ccf5ec;
+  --mind: #3b82f6;
+  --mind-glow: #dbeafe;
+  --energy: #f59e0b;
+  --energy-glow: #fef3c7;
+  --alert: #ef4444;
+  --alert-glow: #fee2e2;
+
+  /* ——— Patient mode (calm dark canvas) ——— */
+  --patient-bg: #070b12;
+  --patient-sheet: #121821;
+  --patient-ink: #f4f7fb;
+  --patient-mute: #8b96a8;
+  --patient-vital: #2ee6c5;
+
+  /* ——— Shape & elevation ——— */
+  --r-xl: 32px;
+  --r-lg: 22px;
+  --r-md: 16px;
+  --r-sm: 12px;
+  --shadow: 0 1px 0 rgba(12, 18, 34, 0.04), 0 12px 40px rgba(12, 18, 34, 0.06);
+  --shadow-float: 0 24px 64px rgba(12, 18, 34, 0.12);
+
+  /* ——— Type (swap fonts in index.html + here) ——— */
+  --font-display: "Fraunces", Georgia, serif;
+  --font-body: "Plus Jakarta Sans", system-ui, sans-serif;
+
+  /* ——— Touch targets (dementia / elderly) ——— */
+  --tap-min: 56px;
+  --tap-patient: 72px;
+  --page-pad: 22px;
+  --shell-max: 430px;
+
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+
+  /* ——— Aliases (legacy screens) ——— */
+  --bg-elevated: var(--sheet);
+  --ink-secondary: var(--ink-2);
+  --ink-tertiary: var(--ink-3);
+  --line-strong: var(--line-2);
+  --fill-strong: #e8eef5;
+  --health: var(--vital);
+  --health-soft: var(--vital-glow);
+  --health-deep: var(--vital-deep);
+  --sky: var(--mind);
+  --sky-soft: var(--mind-glow);
+  --warn: var(--energy);
+  --warn-soft: var(--energy-glow);
+  --danger: var(--alert);
+  --danger-soft: var(--alert-glow);
+  --patient-elevated: var(--patient-sheet);
+  --patient-muted: var(--patient-mute);
+  --patient-accent: var(--patient-vital);
+  --fog: var(--bg);
+  --fog-deep: var(--fill);
+  --ink-soft: var(--ink-2);
+  --surface: var(--sheet);
+  --surface-elevated: var(--sheet);
+  --teal: var(--vital);
+  --teal-deep: var(--vital-deep);
+  --amber: var(--energy);
+  --patient-surface: var(--patient-sheet);
+  --radius: var(--r-lg);
+  --radius-lg: var(--r-lg);
+  --radius-md: var(--r-md);
+  --radius-sm: var(--r-sm);
+  --radius-xl: var(--r-xl);
+  --shadow-sm: 0 1px 2px rgba(12, 18, 34, 0.04);
+  --shadow-md: var(--shadow);
+}
