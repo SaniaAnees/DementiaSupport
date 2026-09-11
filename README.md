@@ -1,40 +1,25 @@
 # DementiaSupport
 
-Offline-first caregiver + family + patient cognitive engagement.
+Offline-first cognitive care for dementia patients + caregivers.
 
-## Final stack (locked)
+## Branches
 
-| Layer | Tech |
-|-------|------|
-| Mobile | Flutter (patient + caregiver) |
-| Mobile DB | **Drift → SQLite** (offline truth) |
-| Voice | Sherpa ONNX on-device (`VoiceEngine`) |
-| Web SaaS | Next.js on Vercel |
-| Backend | Supabase (Auth, Postgres, Storage, Realtime) |
-| Cloud brain | Google Gemini — cold path only |
+| Branch | Purpose |
+|--------|---------|
+| **`main`** | Product rebuild starts here (clean slate). |
+| **`white-app-vite`** | Frozen Vite/Capacitor demo (`localhost:5173`) for fallback demos. |
+
+### Run the old white Vite demo
 
 ```bash
-# Agent-oriented (after secrets in env)
-# Flutter APK · supabase db push · vercel --prod
-```
-
-See `app/src/architecture.ts`. Capacitor `app/` is legacy reference during Flutter migration.
-
-Fresh APK install = **real onboarding** (no demo seed):
-1. Disclaimer  
-2. Caregiver account + PIN  
-3. Patient profile + session times  
-4. Real family photo library (min 3)  
-5. Daily sessions in PIN-locked patient mode  
-6. Family hub at `/family` for relatives  
-
-```bash
+git checkout white-app-vite
 cd app
 npm install
 npm run dev
-npm run build && npx cap sync android && npx cap open android
 ```
 
-See [`app/README.md`](app/README.md) and `app/src/architecture.ts`.
+### Rebuild on main
+
+Stay on `main` and build from scratch. Do not merge demo folders onto main unless you intend to.
 
 **Disclaimer:** Not a medical device.

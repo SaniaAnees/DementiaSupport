@@ -1,7 +1,0 @@
-<?xml version='1.0' encoding='utf-8'?>
-<resources>
-    <string name="app_name">DementiaSupport</string>
-    <string name="title_activity_main">DementiaSupport</string>
-    <string name="package_name">com.dementiasupport.app</string>
-    <string name="custom_url_scheme">com.dementiasupport.app</string>
-</resources>
