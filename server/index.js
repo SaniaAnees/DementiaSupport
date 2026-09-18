@@ -1,6 +1,7 @@
 require('dotenv').config();
 
-console.log('MindCare boot: node', process.version, 'port', process.env.PORT || 3000);
+const commit = process.env.RAILWAY_GIT_COMMIT_SHA || process.env.RAILWAY_GIT_COMMIT || 'local';
+console.log('MindCare boot: node', process.version, 'port', process.env.PORT || 3000, 'commit', String(commit).slice(0, 7));
 
 const express = require('express');
 const cors = require('cors');

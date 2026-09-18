@@ -128,7 +128,15 @@ async function ensurePostgresColumns() {
 
 function initSQLite() {
   if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
-  sqliteDb = require('better-sqlite3')(SQLITE_PATH);
+  let Database;
+  try {
+    Database = require('better-sqlite3');
+  } catch (err) {
+    throw new Error(
+      'better-sqlite3 is not installed (optional). For local SQLite run: npm install better-sqlite3. On Railway use Postgres + DATABASE_URL.'
+    );
+  }
+  sqliteDb = Database(SQLITE_PATH);
   sqliteDb.pragma('journal_mode = WAL');
   sqliteDb.exec(SQLITE_SCHEMA);
   ensureSqliteColumns();
