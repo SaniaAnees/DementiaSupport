@@ -138,13 +138,30 @@ function initSQLite() {
 
 function initPostgres() {
   const { Pool } = require('pg');
+  const url = process.env.DATABASE_URL || '';
+  const needsSsl =
+    process.env.PGSSLMODE === 'require' ||
+    url.includes('railway') ||
+    url.includes('rlwy.net') ||
+    url.includes('render.com') ||
+    url.includes('supabase');
   pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
-    ssl: process.env.DATABASE_URL?.includes('railway')
-      ? { rejectUnauthorized: false }
-      : false,
+    connectionString: url,
+    ssl: needsSsl ? { rejectUnauthorized: false } : false,
+    connectionTimeoutMillis: 10000,
   });
   pool.on('error', (err) => console.error('PG pool error:', err.message || err.code));
+}
+
+async function ensurePostgresSchema() {
+  if (!pool) return;
+  const schemaPath = path.join(__dirname, 'schema.sql');
+  if (!fs.existsSync(schemaPath)) {
+    console.warn('schema.sql missing — skipping Postgres schema bootstrap');
+    return;
+  }
+  const sql = fs.readFileSync(schemaPath, 'utf8');
+  await pool.query(sql);
 }
 
 function normalizeSql(sql) {
@@ -162,11 +179,24 @@ function normalizeSql(sql) {
 /**
  * Probe DATABASE_URL. If Postgres is down / unreachable, fall back to SQLite
  * so demo OTP and local PWA keep working.
+ * On Railway, prefer a linked Postgres plugin (DATABASE_URL) over ephemeral SQLite.
  */
 async function ready() {
+  const onRailway = !!(process.env.RAILWAY_ENVIRONMENT || process.env.RAILWAY_PROJECT_ID);
+
   if (!process.env.DATABASE_URL) {
-    initSQLite();
-    return engine;
+    try {
+      initSQLite();
+      return engine;
+    } catch (err) {
+      console.error('SQLite init failed:', err.message || err);
+      if (onRailway) {
+        throw new Error(
+          'No DATABASE_URL and SQLite failed. Add a Postgres plugin on Railway and set DATABASE_URL.'
+        );
+      }
+      throw err;
+    }
   }
 
   try {
@@ -177,6 +207,7 @@ async function ready() {
     } catch (_) {
       // may lack permission; schema may already use uuid-ossp
     }
+    await ensurePostgresSchema();
     engine = 'postgres';
     await ensurePostgresColumns();
     console.log('PostgreSQL ready');
@@ -188,8 +219,16 @@ async function ready() {
       await pool?.end?.();
     } catch (_) {}
     pool = null;
-    initSQLite();
-    return engine;
+    try {
+      initSQLite();
+      return engine;
+    } catch (sqliteErr) {
+      console.error('SQLite fallback failed:', sqliteErr.message || sqliteErr);
+      throw new Error(
+        'Database unavailable. On Railway: add Postgres, wait until it is Running, then redeploy. Detail: ' +
+          why
+      );
+    }
   }
 }
 

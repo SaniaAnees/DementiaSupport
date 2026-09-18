@@ -12,10 +12,16 @@ const analyticsRoutes = require('./routes/analytics');
 const speechRoutes = require('./routes/speech');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = Number(process.env.PORT) || 3000;
+const HOST = process.env.HOST || '0.0.0.0';
 
 app.use(cors());
-app.use(express.json({ limit: '10mb' }));
+app.use(express.json({ limit: '12mb' }));
+
+// Railway / load-balancer probes — must succeed or the service restarts
+app.get('/health', (_req, res) => {
+  res.status(200).json({ ok: true, engine: db.getEngine?.() || 'starting' });
+});
 
 app.use('/api/auth', authRoutes);
 app.use('/api/patients', patientRoutes);
@@ -27,15 +33,16 @@ app.use('/api/speech', speechRoutes);
 app.use(express.static(path.join(__dirname, '../public')));
 
 app.get('*', (req, res) => {
-  if (!req.path.startsWith('/api/')) {
-    res.sendFile(path.join(__dirname, '../public/index.html'));
+  if (req.path.startsWith('/api/')) {
+    return res.status(404).json({ error: 'Not found' });
   }
+  res.sendFile(path.join(__dirname, '../public/index.html'));
 });
 
 async function start() {
   const engine = await db.ready();
-  app.listen(PORT, () => {
-    console.log(`MindCare server running on port ${PORT}`);
+  app.listen(PORT, HOST, () => {
+    console.log(`MindCare server listening on http://${HOST}:${PORT}`);
     console.log(`Demo mode: ${process.env.DEMO_MODE === 'true' ? 'ON' : 'OFF'}`);
     console.log(`DB engine: ${engine}`);
   });
