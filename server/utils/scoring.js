@@ -25,6 +25,47 @@ function chips(correct, pool) {
 }
 
 /**
+ * Map item domains → caregiver skill scores (0–100).
+ * @param {{ domain?: string, itemType?: string, transcript?: string, isCorrect?: boolean }[]} responses
+ * @returns {Record<string, number>}
+ */
+function domainScoresFromResponses(responses) {
+  const by = {};
+  const alias = {
+    orientation: 'orientation',
+    registration: 'recall',
+    recall: 'recall',
+    learning_memory: 'recall',
+    attention: 'attention',
+    complex_attention: 'attention',
+    reasoning: 'reasoning',
+    executive_function: 'reasoning',
+    language: 'language',
+    perceptual_motor: 'attention',
+    social_cognition: 'language',
+    story: null,
+  };
+  for (const r of responses || []) {
+    if (!r?.domain || r.domain === 'story' || r.transcript === '(continue)') continue;
+    if (['story_beat', 'registration_teach', 'memory_teach'].includes(r.itemType)) continue;
+    const key = alias[r.domain] !== undefined ? alias[r.domain] : r.domain;
+    if (!key) continue;
+    if (!by[key]) by[key] = { correct: 0, total: 0 };
+    by[key].total += 1;
+    if (r.isCorrect) by[key].correct += 1;
+  }
+  const out = {};
+  for (const [k, v] of Object.entries(by)) {
+    out[k] = v.total ? Math.round((v.correct / v.total) * 100) : null;
+  }
+  if (out.recall != null) out.learning_memory = out.recall;
+  if (out.attention != null) out.complex_attention = out.attention;
+  if (out.reasoning != null) out.executive_function = out.reasoning;
+  if (out.orientation == null && out.learning_memory != null) out.orientation = out.learning_memory;
+  return out;
+}
+
+/**
  * @param {{ shortLabel: string, aliases?: string[], relation?: string }} memory
  * @returns {string[]}
  */
@@ -106,4 +147,12 @@ function computeSessionScores(results) {
   return { accuracy, avgResponseMs, hintsUsed, repetitions, hintRate, compositeScore };
 }
 
-module.exports = { shuffle, chips, expected, variedPrompt, gradeAnswer, computeSessionScores };
+module.exports = {
+  shuffle,
+  chips,
+  expected,
+  variedPrompt,
+  gradeAnswer,
+  computeSessionScores,
+  domainScoresFromResponses,
+};

@@ -1,0 +1,207 @@
+{
+  "state": "mz",
+  "name": "Mizoram",
+  "greeting": "Chibai",
+  "languageCodes": [
+    "en-IN"
+  ],
+  "imageBase": "/assets/curriculum/mz",
+  "weekdayNames": {
+    "en": [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday"
+    ],
+    "hi": [
+      "Ravivar",
+      "Somvar",
+      "Mangalvar",
+      "Budhvar",
+      "Guruvar",
+      "Shukravar",
+      "Shanivar"
+    ]
+  },
+  "weekdayAliases": {
+    "Sunday": [
+      "ravivar",
+      "robibar",
+      "रविवार"
+    ],
+    "Monday": [
+      "somvar",
+      "sombar",
+      "सोमवार"
+    ],
+    "Tuesday": [
+      "mangalvar",
+      "मंगलवार"
+    ],
+    "Wednesday": [
+      "budhvar",
+      "बुधवार"
+    ],
+    "Thursday": [
+      "guruvar",
+      "गुरुवार"
+    ],
+    "Friday": [
+      "shukravar",
+      "shukkar",
+      "शुक्रवार",
+      "friday"
+    ],
+    "Saturday": [
+      "shanivar",
+      "शनिवार"
+    ]
+  },
+  "items": {
+    "rice": {
+      "id": "rice",
+      "label": "Rice",
+      "aliases": [
+        "rice"
+      ],
+      "caption": "Steamed rice",
+      "image": "rice.jpg"
+    },
+    "tea_cup": {
+      "id": "tea_cup",
+      "label": "Tea cup",
+      "aliases": [
+        "tea cup",
+        "cup",
+        "tea",
+        "chai"
+      ],
+      "caption": "A cup of tea",
+      "image": "tea_cup.jpg"
+    },
+    "bicycle": {
+      "id": "bicycle",
+      "label": "Bicycle",
+      "aliases": [
+        "bicycle",
+        "cycle",
+        "bike"
+      ],
+      "caption": "A bicycle",
+      "image": "bicycle.jpg"
+    },
+    "book": {
+      "id": "book",
+      "label": "Book",
+      "aliases": [
+        "book"
+      ],
+      "caption": "A book",
+      "image": "book.jpg"
+    },
+    "home": {
+      "id": "home",
+      "label": "Home",
+      "aliases": [
+        "home",
+        "house"
+      ],
+      "caption": "Home in Mizoram",
+      "image": "home.jpg"
+    },
+    "morning": {
+      "id": "morning",
+      "label": "Morning",
+      "aliases": [
+        "morning"
+      ],
+      "caption": "Morning in Aizawl",
+      "image": "morning.jpg"
+    },
+    "evening": {
+      "id": "evening",
+      "label": "Evening",
+      "aliases": [
+        "evening"
+      ],
+      "caption": "Evening in the hills",
+      "image": "evening.jpg"
+    },
+    "reiek": {
+      "id": "reiek",
+      "label": "Reiek",
+      "aliases": [
+        "reiek",
+        "peak"
+      ],
+      "caption": "Reiek Peak",
+      "image": "reiek.jpg"
+    },
+    "bai": {
+      "id": "bai",
+      "label": "Bai",
+      "aliases": [
+        "bai",
+        "boiled vegetables",
+        "mizo bai"
+      ],
+      "caption": "Mizo bai — boiled vegetables with meat",
+      "image": "bai.jpg"
+    },
+    "phawngpui": {
+      "id": "phawngpui",
+      "label": "Phawngpui",
+      "aliases": [
+        "phawngpui",
+        "blue mountain",
+        "mountain"
+      ],
+      "caption": "Phawngpui — Blue Mountain",
+      "image": "phawngpui.jpg"
+    },
+    "chapchar_kut": {
+      "id": "chapchar_kut",
+      "label": "Chapchar Kut",
+      "aliases": [
+        "chapchar kut",
+        "chapchar",
+        "kut",
+        "mizo festival"
+      ],
+      "caption": "Chapchar Kut — spring festival of Mizoram",
+      "image": "chapchar_kut.jpg"
+    },
+    "puan": {
+      "id": "puan",
+      "label": "Puan",
+      "aliases": [
+        "puan",
+        "mizo puan",
+        "wrap"
+      ],
+      "caption": "Traditional Mizo puan",
+      "image": "puan.jpg"
+    },
+    "hnipui": {
+      "id": "hnipui",
+      "label": "Hnipui",
+      "aliases": [
+        "hnipui",
+        "shawl",
+        "mizo shawl"
+      ],
+      "caption": "Mizo hnipui cloth",
+      "image": "hnipui.jpg"
+    }
+  },
+  "distractHometowns": [
+    "Guwahati",
+    "Shillong",
+    "Imphal",
+    "Kohima",
+    "Agartala"
+  ]
+}

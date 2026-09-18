@@ -1,5 +1,5 @@
 // Service Worker — offline-first, cache API responses
-const CACHE_NAME = 'mindcare-v40';
+const CACHE_NAME = 'mindcare-v78-voice-always';
 const ASSETS = [
   '/',
   '/index.html',
@@ -38,7 +38,12 @@ const ASSETS = [
   '/js/engine/grading.js',
   '/js/engine/scoring.js',
   '/js/voice/phrases.js',
+  '/js/voice/sessionI18n.js',
   '/js/voice/voiceLayer.js',
+  '/js/features/caregiver/heroInsights.js',
+  '/js/features/caregiver/healthInsights.js',
+  '/js/features/caregiver/dashboardEngine.js',
+  '/js/features/caregiver/wellnessCheckins.js',
   '/js/features/caregiver/home.js',
   '/js/features/caregiver/patientEditor.js',
   '/js/features/caregiver/analytics.js',
@@ -75,21 +80,44 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Static assets — cache first
+  // JS / CSS — network first so voice UX updates are never stuck behind old SW cache
+  if (
+    url.pathname.startsWith('/js/') ||
+    url.pathname.startsWith('/css/') ||
+    url.pathname === '/index.html' ||
+    url.pathname === '/'
+  ) {
+    event.respondWith(
+      fetch(event.request)
+        .then((response) => {
+          if (response.ok && response.type !== 'opaque') {
+            const clone = response.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+          }
+          return response;
+        })
+        .catch(() => caches.match(event.request))
+    );
+    return;
+  }
+
+  // Other static assets — cache first
   event.respondWith(
     caches.match(event.request).then((cached) => {
-      return cached || fetch(event.request).then((response) => {
-        if (response.ok && response.type !== 'opaque') {
-          const clone = response.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
-        }
-        return response;
-      });
+      return (
+        cached ||
+        fetch(event.request).then((response) => {
+          if (response.ok && response.type !== 'opaque') {
+            const clone = response.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+          }
+          return response;
+        })
+      );
     })
   );
 });
 
-// Background sync for offline data
 self.addEventListener('sync', (event) => {
   if (event.tag === 'sync-queue') {
     event.waitUntil(self.syncQueue());
@@ -97,13 +125,10 @@ self.addEventListener('sync', (event) => {
 });
 
 async function syncQueue() {
-  const client = await self.clients.get(await self.clients.matchAll()[0]?.id);
-  // Message client to flush
   const clients = await self.clients.matchAll();
   clients.forEach((c) => c.postMessage({ type: 'SYNC' }));
 }
 
-// Handle messages from app
 self.addEventListener('message', (event) => {
   if (event.data?.type === 'SKIP_WAITING') {
     self.skipWaiting();

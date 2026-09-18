@@ -40,25 +40,54 @@ router.post('/', async (req, res) => {
 
 async function syncSession(payload) {
   const { session, responses, scores } = payload;
+  const domains =
+    (scores && scores.domains) ||
+    (session && session.domains) ||
+    {};
   // Upsert session
   await db.query(
-    `INSERT INTO sessions (id, patient_id, session_type, status, started_at, ended_at, accuracy, avg_response_ms, hints_used, repetitions, composite_score, hint_rate)
-     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)
+    `INSERT INTO sessions (id, patient_id, session_type, status, started_at, ended_at, accuracy, avg_response_ms, hints_used, repetitions, composite_score, hint_rate, domains)
+     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13::jsonb)
      ON CONFLICT (id) DO UPDATE SET
        status=EXCLUDED.status, ended_at=EXCLUDED.ended_at, accuracy=EXCLUDED.accuracy,
        avg_response_ms=EXCLUDED.avg_response_ms, hints_used=EXCLUDED.hints_used,
-       repetitions=EXCLUDED.repetitions, composite_score=EXCLUDED.composite_score, hint_rate=EXCLUDED.hint_rate`,
-    [session.id, session.patientId, session.sessionType, 'completed', session.startedAt, session.endedAt,
-     scores.accuracy, scores.avgResponseMs, scores.hintsUsed, scores.repetitions, scores.compositeScore, scores.hintRate]
+       repetitions=EXCLUDED.repetitions, composite_score=EXCLUDED.composite_score, hint_rate=EXCLUDED.hint_rate,
+       domains=EXCLUDED.domains`,
+    [
+      session.id,
+      session.patientId || session.patient_id,
+      session.sessionType || session.session_type,
+      'completed',
+      session.startedAt || session.started_at,
+      session.endedAt || session.ended_at,
+      scores.accuracy,
+      scores.avgResponseMs,
+      scores.hintsUsed,
+      scores.repetitions,
+      scores.compositeScore,
+      scores.hintRate,
+      JSON.stringify(domains || {}),
+    ]
   );
   // Insert responses
   for (const r of responses) {
     await db.query(
-      `INSERT INTO responses (session_id, item_type, memory_id, prompt_text, expected_answers, transcript, is_correct, response_ms, hints_used, match_score)
-       VALUES ($1,$2,$3,$4,$5::jsonb,$6,$7,$8,$9,$10)
+      `INSERT INTO responses (session_id, item_type, memory_id, prompt_text, expected_answers, transcript, is_correct, response_ms, hints_used, match_score, domain)
+       VALUES ($1,$2,$3,$4,$5::jsonb,$6,$7,$8,$9,$10,$11)
        ON CONFLICT DO NOTHING`,
-      [session.id, r.itemType, r.memoryId, r.promptText, JSON.stringify(r.expectedAnswers || []),
-       r.transcript, r.isCorrect, r.responseMs, r.hintsUsed, r.matchScore]
+      [
+        session.id,
+        r.itemType,
+        r.memoryId,
+        r.promptText,
+        JSON.stringify(r.expectedAnswers || []),
+        r.transcript,
+        r.isCorrect,
+        r.responseMs,
+        r.hintsUsed,
+        r.matchScore,
+        r.domain || null,
+      ]
     );
   }
 }

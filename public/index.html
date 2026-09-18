@@ -303,30 +303,10 @@
 
         <!-- Caregiver Dashboard -->
         <div id="caregiver-view" class="view hidden">
-          <header class="app-header">
-            <h1>MindCare</h1>
-            <div class="header-actions">
-              <button id="sync-btn" class="btn btn-icon" title="Sync">↻</button>
-              <button id="logout-btn" class="btn btn-text" type="button">Log out</button>
-            </div>
+          <header class="cg-topbar">
+            <p class="cg-brand">MindCare</p>
           </header>
-          <nav class="tab-nav">
-            <button class="tab-btn active" data-tab="home">Home</button>
-            <button class="tab-btn" data-tab="patients">Patients</button>
-            <button class="tab-btn" data-tab="analytics">Analytics</button>
-          </nav>
-          <main class="tab-content">
-            <div id="tab-home" class="tab-pane active">
-              <div id="patient-list" class="card-list"></div>
-              <button id="add-patient-btn" class="btn btn-primary btn-large">+ Add Patient</button>
-            </div>
-            <div id="tab-patients" class="tab-pane hidden">
-              <div id="patient-detail"></div>
-            </div>
-            <div id="tab-analytics" class="tab-pane hidden">
-              <div id="analytics-view"></div>
-            </div>
-          </main>
+          <div id="cg-dashboard"></div>
         </div>
 
         <!-- Patient Session View -->
@@ -349,7 +329,12 @@
   <script src="/js/engine/grading.js"></script>
   <script src="/js/engine/scoring.js"></script>
   <script src="/js/voice/phrases.js"></script>
+  <script src="/js/voice/sessionI18n.js"></script>
   <script src="/js/voice/voiceLayer.js"></script>
+  <script src="/js/features/caregiver/heroInsights.js"></script>
+  <script src="/js/features/caregiver/healthInsights.js"></script>
+  <script src="/js/features/caregiver/dashboardEngine.js"></script>
+  <script src="/js/features/caregiver/wellnessCheckins.js"></script>
   <script src="/js/features/caregiver/home.js"></script>
   <script src="/js/features/caregiver/patientEditor.js"></script>
   <script src="/js/features/caregiver/analytics.js"></script>

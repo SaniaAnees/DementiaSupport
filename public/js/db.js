@@ -1,12 +1,21 @@
 // IndexedDB wrapper for offline-first storage
 const DB_NAME = 'mindcare_db';
-const DB_VERSION = 1;
+const DB_VERSION = 2;
 
 let db = null;
 
 function openDB() {
   return new Promise((resolve, reject) => {
-    if (db) { resolve(db); return; }
+    if (db && db.version >= DB_VERSION && db.objectStoreNames.contains('meta')) {
+      resolve(db);
+      return;
+    }
+    if (db) {
+      try {
+        db.close();
+      } catch (_) {}
+      db = null;
+    }
     const request = indexedDB.open(DB_NAME, DB_VERSION);
     request.onupgradeneeded = (e) => {
       const database = e.target.result;
@@ -27,43 +36,69 @@ function openDB() {
       if (!database.objectStoreNames.contains('meta')) {
         database.createObjectStore('meta', { keyPath: 'key' });
       }
+      if (!database.objectStoreNames.contains('caregiverCheckins')) {
+        const store = database.createObjectStore('caregiverCheckins', { keyPath: 'id' });
+        store.createIndex('type', 'type', { unique: false });
+        store.createIndex('completedAt', 'completedAt', { unique: false });
+      }
     };
-    request.onsuccess = (e) => { db = e.target.result; resolve(db); };
+    request.onsuccess = (e) => {
+      db = e.target.result;
+      db.onversionchange = () => {
+        try {
+          db.close();
+        } catch (_) {}
+        db = null;
+      };
+      resolve(db);
+    };
     request.onerror = (e) => reject(e.target.error);
   });
 }
 
-async function tx(storeName, mode, fn) {
-  const database = await openDB();
-  return new Promise((resolve, reject) => {
-    const transaction = database.transaction(storeName, mode);
-    const store = transaction.objectStore(storeName);
-    let result;
-    Promise.resolve(fn(store)).then((r) => { result = r; }).catch(reject);
-    transaction.oncomplete = () => resolve(result);
-    transaction.onerror = () => reject(transaction.error);
-  });
+/** Run one IDB request inside a transaction; wait for tx complete + return request.result */
+function withStore(storeName, mode, run) {
+  return openDB().then(
+    (database) =>
+      new Promise((resolve, reject) => {
+        let req;
+        try {
+          const transaction = database.transaction(storeName, mode);
+          const store = transaction.objectStore(storeName);
+          req = run(store);
+          transaction.oncomplete = () => resolve(req ? req.result : undefined);
+          transaction.onerror = () => reject(transaction.error || req?.error);
+          transaction.onabort = () => reject(transaction.error || new Error('aborted'));
+        } catch (err) {
+          reject(err);
+        }
+      })
+  );
 }
 
 const LocalDB = {
   async put(storeName, data) {
-    return tx(storeName, 'readwrite', (store) => store.put(data));
+    return withStore(storeName, 'readwrite', (store) => store.put(data));
   },
 
   async get(storeName, key) {
-    return tx(storeName, 'readonly', (store) => store.get(key));
+    return withStore(storeName, 'readonly', (store) => store.get(key));
   },
 
   async getAll(storeName) {
-    return tx(storeName, 'readonly', (store) => store.getAll());
+    const rows = await withStore(storeName, 'readonly', (store) => store.getAll());
+    return Array.isArray(rows) ? rows : [];
   },
 
   async getAllByIndex(storeName, indexName, value) {
-    return tx(storeName, 'readonly', (store) => store.index(indexName).getAll(value));
+    const rows = await withStore(storeName, 'readonly', (store) =>
+      store.index(indexName).getAll(value)
+    );
+    return Array.isArray(rows) ? rows : [];
   },
 
   async delete(storeName, key) {
-    return tx(storeName, 'readwrite', (store) => store.delete(key));
+    return withStore(storeName, 'readwrite', (store) => store.delete(key));
   },
 
   async addSyncItem(entityType, entityId, payload, operation = 'upsert') {
@@ -97,56 +132,25 @@ const LocalDB = {
     return row?.value;
   },
 
-  // Seed demo data
+  // Seed ONLY empty patient stub for first-run demos — never invent sessions
   async seedDemo() {
     const existing = await this.getAll('patients');
     if (existing.length > 0) return;
+
+    // Prefer server patients when online; don't invent "Anjali"
+    if (typeof navigator !== 'undefined' && navigator.onLine) return;
 
     const patientId = crypto.randomUUID();
     await this.put('patients', {
       id: patientId,
       caregiverId: 'demo-caregiver',
-      fullName: 'Anjali Devi',
-      preferredName: 'Anjali',
+      fullName: 'Demo Patient',
+      preferredName: 'Friend',
       age: 72,
-      hometown: 'Imphal',
+      hometown: 'Guwahati',
       languageCode: 'en-IN',
-      dementiaNotes: 'Early-stage dementia. Responds well to familiar faces.',
+      dementiaNotes: '',
     });
-
-    const demoMemories = [
-      { id: crypto.randomUUID(), patientId, caption: 'This is your daughter, Meera', shortLabel: 'Meera', aliases: ['beti', 'daughter'], relation: 'daughter', category: 'person', sortOrder: 0 },
-      { id: crypto.randomUUID(), patientId, caption: 'This is your son, Rajesh', shortLabel: 'Rajesh', aliases: ['beta', 'son'], relation: 'son', category: 'person', sortOrder: 1 },
-      { id: crypto.randomUUID(), patientId, caption: 'Your home in Imphal', shortLabel: 'Home', aliases: ['ghar', 'house'], relation: 'home', category: 'place', sortOrder: 2 },
-      { id: crypto.randomUUID(), patientId, caption: 'Your husband, Late R.K. Sharma', shortLabel: 'R.K. Sharma', aliases: ['sharma ji', 'husband'], relation: 'spouse', category: 'person', sortOrder: 3 },
-    ];
-
-    for (const mem of demoMemories) {
-      await this.put('memories', mem);
-    }
-
-    // Seed some historical sessions for analytics
-    const now = new Date();
-    for (let i = 10; i >= 1; i--) {
-      const date = new Date(now);
-      date.setDate(date.getDate() - i);
-      const accuracy = 0.5 + Math.random() * 0.4;
-      const sessionId = crypto.randomUUID();
-      await this.put('sessions', {
-        id: sessionId,
-        patientId,
-        sessionType: i % 2 === 0 ? 'morning' : 'evening',
-        status: 'completed',
-        startedAt: date.toISOString(),
-        endedAt: new Date(date.getTime() + 5 * 60000).toISOString(),
-        accuracy,
-        avgResponseMs: 5000 + Math.floor(Math.random() * 10000),
-        hintsUsed: Math.floor(Math.random() * 5),
-        repetitions: Math.floor(Math.random() * 3),
-        compositeScore: Math.round((accuracy * 70 + 20 + Math.random() * 10) * 10) / 10,
-      });
-    }
-
-    await this.setMeta('demoSeeded', 'true');
+    await this.setMeta('demoSeeded', 'patient-only');
   },
 };

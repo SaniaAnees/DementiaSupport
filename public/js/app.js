@@ -12,8 +12,16 @@ window.app = {
 
     if ('serviceWorker' in navigator) {
       try {
-        await navigator.serviceWorker.register('/sw.js');
+        const reg = await navigator.serviceWorker.register('/sw.js');
         console.log('Service Worker registered');
+        reg.update?.();
+        if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+          if (!window.__mcSwReloaded) {
+            window.__mcSwReloaded = true;
+            window.location.reload();
+          }
+        });
       } catch (err) {
         console.warn('Service Worker registration failed:', err);
       }
@@ -298,7 +306,27 @@ window.app = {
         }
       }
     } else {
-      if (typeof VoiceLayer !== 'undefined') VoiceLayer.stop();
+      // Voice is patient-only — hard cut when entering caregiver
+      try {
+        if (typeof PatientHome !== 'undefined') PatientHome.teardown?.();
+      } catch (_) {}
+      try {
+        if (typeof SessionPlay !== 'undefined') {
+          SessionPlay._quizListenActive = false;
+          SessionPlay.listening = false;
+        }
+      } catch (_) {}
+      try {
+        if (typeof VoiceLayer !== 'undefined') {
+          VoiceLayer.stop?.();
+          VoiceLayer.stopSpeaking?.();
+          VoiceLayer.stopListening?.();
+        }
+      } catch (_) {}
+      try {
+        speechSynthesis?.cancel?.();
+      } catch (_) {}
+      document.getElementById('main-app')?.classList.remove('is-session-active');
       showScreen('patient-view', false);
       document.getElementById('patient-view')?.classList.add('hidden');
       showScreen('caregiver-view');
@@ -311,35 +339,50 @@ window.app = {
 
   async loadDefaultPatient() {
     let patients = await LocalDB.getAll('patients');
-    if (patients.length === 0 && navigator.onLine) {
-      patients = await API.getPatients().catch(() => []);
-      for (const p of patients) {
-        await LocalDB.put('patients', {
-          id: p.id,
-          caregiverId: p.caregiver_id || p.caregiverId,
-          fullName: p.full_name || p.fullName,
-          preferredName: p.preferred_name || p.preferredName,
-          hometown: p.hometown,
-          languageCode: p.language_code || p.languageCode,
-          ...p,
-        });
+    if (navigator.onLine) {
+      const server = await API.getPatients().catch(() => null);
+      if (Array.isArray(server) && server.length) {
+        const serverIds = new Set(server.map((p) => p.id));
+        for (const local of patients) {
+          if (!serverIds.has(local.id)) {
+            await LocalDB.delete?.('patients', local.id).catch(() => {});
+          }
+        }
+        for (const p of server) {
+          await LocalDB.put('patients', {
+            id: p.id,
+            caregiverId: p.caregiver_id || p.caregiverId,
+            fullName: p.full_name || p.fullName,
+            preferredName: p.preferred_name || p.preferredName,
+            hometown: p.hometown,
+            languageCode: p.language_code || p.languageCode,
+            ...p,
+          });
+        }
+        patients = server;
       }
     }
     if (patients.length > 0) {
-      const p = patients[0];
+      const pick =
+        patients.find((p) => {
+          const n = (p.preferred_name || p.preferredName || '').toLowerCase();
+          return n && !/^(anjali|anjani|friend|demo)$/.test(n);
+        }) || patients[0];
       this.currentPatient = {
-        id: p.id,
-        fullName: p.full_name || p.fullName,
-        preferredName: p.preferred_name || p.preferredName,
-        hometown: p.hometown,
-        languageCode: p.language_code || p.languageCode,
-        ...p,
+        id: pick.id,
+        fullName: pick.full_name || pick.fullName,
+        preferredName: pick.preferred_name || pick.preferredName,
+        hometown: pick.hometown,
+        languageCode: pick.language_code || pick.languageCode,
+        ...pick,
       };
       const name =
         this.currentPatient.preferredName ||
         this.currentPatient.preferred_name ||
         (this.currentPatient.fullName || this.currentPatient.full_name || '').split(/\s+/)[0];
-      if (name) await LocalDB.setMeta?.('patientPreferredName', name).catch(() => {});
+      if (name && !/^(anjali|anjani|friend|demo)$/i.test(name)) {
+        await LocalDB.setMeta?.('patientPreferredName', name).catch(() => {});
+      }
     }
   },
 
@@ -376,12 +419,7 @@ function showScreen(id, show = true) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  document.getElementById('logout-btn')?.addEventListener('click', async () => {
-    await API.logout().catch(() => {});
-    Session.clear();
-    app.showAuthGate();
-  });
-
+  // Logout lives in Caregiver → Settings (data-cg-logout)
   app.init();
 });
 

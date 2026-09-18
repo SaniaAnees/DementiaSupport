@@ -1,8 +1,9 @@
 {
   "day": 1,
   "sessionType": "evening",
-  "theme": "Home & evening tea",
-  "title": "Evening tea at home",
+  "theme": "{{preferredName}}’s evening with family",
+  "title": "Evening teach, then play",
+  "clinicalFramework": "DSM-5-TR Major/Mild Neurocognitive Disorder domains",
   "registrationIds": [
     "pitha",
     "brahmaputra",
@@ -10,50 +11,109 @@
   ],
   "steps": [
     {
-      "id": "e1-orient-day",
-      "itemType": "orientation",
-      "domain": "orientation",
-      "promptText": "What day is it?",
-      "spokenPrompt": "Good evening. What day is it?",
-      "answerFrom": "weekday",
-      "chipPool": "weekdays",
-      "hintText": "Today is {{weekday}}.",
-      "media": {
-        "kind": "image",
-        "image": "calendar.jpg",
-        "caption": "Calendar"
-      }
-    },
-    {
-      "id": "e1-orient-tod",
-      "itemType": "orientation",
-      "domain": "orientation",
-      "promptText": "Is it morning or evening now?",
-      "spokenPrompt": "Is it morning or evening now?",
-      "expectedAnswers": [
-        "evening",
-        "night",
-        "pm",
-        "dusk"
-      ],
-      "chipOptions": [
-        "Morning",
-        "Evening",
-        "Afternoon",
-        "Midnight"
-      ],
-      "hintText": "It is evening.",
+      "id": "e1-welcome",
+      "itemType": "story_beat",
+      "domain": "story",
+      "promptText": "Good evening, {{preferredName}}. First a gentle reminder — then games.",
+      "spokenPrompt": "Good evening, {{preferredName}}. First a gentle reminder of today’s words, then games. Ready?",
+      "continueLabel": "I’m ready",
+      "continueKicker": "Teach first",
+      "autoCorrect": true,
       "media": {
         "kind": "image",
         "image": "evening.jpg",
-        "caption": "Evening sky"
+        "caption": "Assam evening"
       }
     },
     {
-      "id": "e1-orient-person",
+      "id": "e1-teach-family-0",
+      "itemType": "registration_teach",
+      "domain": "learning_memory",
+      "promptText": "This is {{family0.label}}. Look again. Remember.",
+      "spokenPrompt": "This is {{family0.label}}. Look again. Say {{family0.label}}.",
+      "continueLabel": "Next",
+      "continueKicker": "Family reminder",
+      "autoCorrect": true,
+      "media": {
+        "kind": "family",
+        "index": 0
+      }
+    },
+    {
+      "id": "e1-teach-family-1",
+      "itemType": "registration_teach",
+      "domain": "learning_memory",
+      "promptText": "This is {{family1.label}}. Look carefully.",
+      "spokenPrompt": "This is {{family1.label}}. Say {{family1.label}}.",
+      "continueLabel": "Next",
+      "continueKicker": "Family reminder",
+      "autoCorrect": true,
+      "media": {
+        "kind": "family",
+        "index": 1
+      }
+    },
+    {
+      "id": "e1-teach-pitha",
+      "itemType": "registration_teach",
+      "domain": "learning_memory",
+      "bankItem": "pitha",
+      "promptText": "From this morning — Pitha, the rice cake. Say Pitha.",
+      "spokenPrompt": "From this morning — Pitha. Say Pitha.",
+      "continueLabel": "Next",
+      "autoCorrect": true
+    },
+    {
+      "id": "e1-teach-river",
+      "itemType": "registration_teach",
+      "domain": "learning_memory",
+      "bankItem": "brahmaputra",
+      "promptText": "Brahmaputra — the great river. Say Brahmaputra.",
+      "spokenPrompt": "Brahmaputra. Say Brahmaputra.",
+      "continueLabel": "Next",
+      "autoCorrect": true
+    },
+    {
+      "id": "e1-teach-bihu",
+      "itemType": "registration_teach",
+      "domain": "learning_memory",
+      "bankItem": "bihu",
+      "promptText": "Bihu — our festival. Say Bihu.",
+      "spokenPrompt": "Bihu. Say Bihu.",
+      "continueLabel": "Next",
+      "autoCorrect": true
+    },
+    {
+      "id": "e1-teach-gamusa",
+      "itemType": "registration_teach",
+      "domain": "language",
+      "bankItem": "gamusa",
+      "promptText": "This is Gamusa — the white-red Assamese cloth. Say Gamusa.",
+      "spokenPrompt": "This is Gamusa. Say Gamusa with me.",
+      "continueLabel": "Next",
+      "continueKicker": "Learn the word",
+      "autoCorrect": true
+    },
+    {
+      "id": "e1-teach-done",
+      "itemType": "story_beat",
+      "domain": "story",
+      "promptText": "Good. Now evening games — use what we just reviewed.",
+      "spokenPrompt": "Good, {{preferredName}}. Now evening games.",
+      "continueLabel": "Start games",
+      "continueKicker": "Quiz time",
+      "autoCorrect": true,
+      "media": {
+        "kind": "image",
+        "image": "evening.jpg",
+        "caption": "Assam evening"
+      }
+    },
+    {
+      "id": "e1-quiz-family-0",
       "itemType": "orientation",
-      "domain": "orientation",
-      "promptText": "Who is this family member?",
+      "domain": "learning_memory",
+      "promptText": "Who is this?",
       "spokenPrompt": "Who is this?",
       "answerFrom": "family0",
       "chipPool": "familyLabels",
@@ -64,53 +124,74 @@
       }
     },
     {
-      "id": "e1-reg-intro",
-      "itemType": "story_beat",
-      "domain": "registration",
-      "promptText": "This morning we learned three treasures. Let’s see them again.",
-      "spokenPrompt": "This morning we learned three Assam treasures. Let’s see them once more, gently.",
-      "continueLabel": "Show me",
-      "autoCorrect": true,
+      "id": "e1-quiz-family-1",
+      "itemType": "orientation",
+      "domain": "learning_memory",
+      "promptText": "And who is this?",
+      "spokenPrompt": "And who is this?",
+      "answerFrom": "family1",
+      "chipPool": "familyLabels",
+      "hintText": "This is {{family1.label}}.",
       "media": {
-        "kind": "image",
-        "image": "evening.jpg",
-        "caption": "Evening calm"
+        "kind": "family",
+        "index": 1
       }
     },
     {
-      "id": "e1-reg-1",
-      "itemType": "registration_teach",
-      "domain": "registration",
-      "bankItem": "pitha",
-      "promptText": "Pitha — the rice cake from this morning.",
-      "spokenPrompt": "Pitha. Say Pitha.",
-      "continueLabel": "Next",
-      "autoCorrect": true
-    },
-    {
-      "id": "e1-reg-2",
-      "itemType": "registration_teach",
-      "domain": "registration",
-      "bankItem": "brahmaputra",
-      "promptText": "Brahmaputra — the great river.",
-      "spokenPrompt": "Brahmaputra. Say Brahmaputra.",
-      "continueLabel": "Next",
-      "autoCorrect": true
-    },
-    {
-      "id": "e1-reg-3",
-      "itemType": "registration_teach",
-      "domain": "registration",
+      "id": "e1-quiz-bihu",
+      "itemType": "recall",
+      "domain": "learning_memory",
+      "promptText": "What festival did we name?",
+      "spokenPrompt": "What festival did we name?",
       "bankItem": "bihu",
-      "promptText": "Bihu — our festival.",
-      "spokenPrompt": "Bihu. Say Bihu.",
-      "continueLabel": "Next",
-      "autoCorrect": true
+      "chipPool": "registrationSet",
+      "hintText": "Bihu."
     },
     {
-      "id": "e1-attn",
+      "id": "e1-quiz-river",
+      "itemType": "recall",
+      "domain": "learning_memory",
+      "promptText": "Which river did we remember?",
+      "spokenPrompt": "Which river did we remember?",
+      "bankItem": "brahmaputra",
+      "chipPool": "registrationSet",
+      "hintText": "Brahmaputra."
+    },
+    {
+      "id": "e1-quiz-pitha",
+      "itemType": "recall",
+      "domain": "learning_memory",
+      "promptText": "What is the Assamese rice cake called?",
+      "spokenPrompt": "What is the Assamese rice cake called?",
+      "bankItem": "pitha",
+      "chipPool": "registrationSet",
+      "hintText": "Pitha."
+    },
+    {
+      "id": "e1-quiz-gamusa",
+      "itemType": "language",
+      "domain": "language",
+      "promptText": "What do we call this white-red cloth?",
+      "spokenPrompt": "What do we call this white-red Assamese cloth?",
+      "bankItem": "gamusa",
+      "expectedAnswers": [
+        "gamusa",
+        "gamosa",
+        "towel",
+        "scarf"
+      ],
+      "chipOptions": [
+        "Gamusa",
+        "Jaapi",
+        "Pitha",
+        "Bihu"
+      ],
+      "hintText": "Gamusa."
+    },
+    {
+      "id": "e1-quiz-attn",
       "itemType": "attention_change",
-      "domain": "attention",
+      "domain": "complex_attention",
       "promptText": "What is new on the evening table?",
       "spokenPrompt": "Look at the table. Now look again. What is new?",
       "expectedAnswers": [
@@ -139,59 +220,61 @@
         "pitha",
         "tea_cup"
       ],
-      "lookMs": 3500
+      "lookMs": 8000
     },
     {
-      "id": "e1-recall-1",
-      "itemType": "recall",
-      "domain": "recall",
-      "promptText": "From this morning — what festival did we name?",
-      "spokenPrompt": "From this morning — what festival did we name?",
-      "bankItem": "bihu",
-      "chipPool": "registrationSet",
-      "hintText": "Bihu."
-    },
-    {
-      "id": "e1-recall-2",
-      "itemType": "recall",
-      "domain": "recall",
-      "promptText": "Which river did we remember?",
-      "spokenPrompt": "Which river did we remember?",
-      "bankItem": "brahmaputra",
-      "chipPool": "registrationSet",
-      "hintText": "Brahmaputra."
-    },
-    {
-      "id": "e1-recall-3",
-      "itemType": "recall",
-      "domain": "recall",
-      "promptText": "What is the Assamese rice cake called?",
-      "spokenPrompt": "What is the Assamese rice cake called?",
-      "bankItem": "pitha",
-      "chipPool": "registrationSet",
-      "hintText": "Pitha."
-    },
-    {
-      "id": "e1-lang",
-      "itemType": "language",
-      "domain": "language",
-      "promptText": "What is this traditional hat called?",
-      "spokenPrompt": "What is this Assamese bamboo hat called?",
-      "bankItem": "jaapi",
-      "chipOptions": [
-        "Jaapi",
-        "Gamusa",
-        "Pitha",
-        "Bihu"
+      "id": "e1-quiz-exec",
+      "itemType": "sequence_order",
+      "domain": "executive_function",
+      "promptText": "Evening wind-down — tap steps in order.",
+      "spokenPrompt": "Tap in order — wash hands, sit for tea, share a story, rest.",
+      "sequenceSteps": [
+        {
+          "id": "wash",
+          "label": "1. Wash hands"
+        },
+        {
+          "id": "tea",
+          "label": "2. Sit for tea"
+        },
+        {
+          "id": "story",
+          "label": "3. Share a story"
+        },
+        {
+          "id": "rest",
+          "label": "4. Rest"
+        }
       ],
-      "hintText": "Jaapi."
+      "expectedAnswers": [
+        "wash tea story rest"
+      ],
+      "hintText": "Wash → tea → story → rest.",
+      "media": {
+        "kind": "family",
+        "index": 0
+      }
     },
     {
-      "id": "e1-reason",
-      "itemType": "reasoning",
-      "domain": "reasoning",
-      "promptText": "For evening tea — which does not belong?",
-      "spokenPrompt": "Tea, pitha, gamusa, and a bicycle — which does not belong with evening tea?",
+      "id": "e1-quiz-family-mid",
+      "itemType": "orientation",
+      "domain": "learning_memory",
+      "promptText": "Still with us — who is this?",
+      "spokenPrompt": "Still with us. Who is this?",
+      "answerFrom": "family1",
+      "chipPool": "familyLabels",
+      "hintText": "This is {{family1.label}}.",
+      "media": {
+        "kind": "family",
+        "index": 1
+      }
+    },
+    {
+      "id": "e1-quiz-pattern",
+      "itemType": "pattern_match",
+      "domain": "perceptual_motor",
+      "promptText": "On the tea tray — which does not belong?",
+      "spokenPrompt": "Tea, pitha, gamusa, bicycle — which does not belong?",
       "expectedAnswers": [
         "bicycle",
         "cycle",
@@ -203,7 +286,7 @@
         "Gamusa",
         "Bicycle"
       ],
-      "hintText": "A bicycle does not belong with tea.",
+      "hintText": "Bicycle.",
       "media": {
         "kind": "image",
         "image": "reasoning.jpg",
@@ -211,12 +294,64 @@
       }
     },
     {
+      "id": "e1-quiz-emotion",
+      "itemType": "emotion_quiz",
+      "domain": "social_cognition",
+      "promptText": "How might {{family0.label}} feel after calm tea?",
+      "spokenPrompt": "How might {{family0.label}} feel — peaceful or angry?",
+      "expectedAnswers": [
+        "peaceful",
+        "calm",
+        "happy",
+        "relaxed",
+        "content",
+        "shant"
+      ],
+      "chipOptions": [
+        "Peaceful",
+        "Angry",
+        "Afraid",
+        "Confused"
+      ],
+      "hintText": "Peaceful.",
+      "media": {
+        "kind": "family",
+        "index": 0
+      }
+    },
+    {
+      "id": "e1-quiz-rhythm",
+      "itemType": "rhythm_count",
+      "domain": "complex_attention",
+      "promptText": "Soft claps: how many — 2 or 3?",
+      "spokenPrompt": "Clap, clap. How many? Say two or three.",
+      "expectedAnswers": [
+        "2",
+        "two",
+        "do",
+        "२"
+      ],
+      "chipOptions": [
+        "2 claps",
+        "3 claps",
+        "4 claps",
+        "1 clap"
+      ],
+      "hintText": "Two.",
+      "media": {
+        "kind": "image",
+        "image": "evening.jpg",
+        "caption": "Soft rhythm"
+      }
+    },
+    {
       "id": "e1-story-setup",
       "itemType": "story_beat",
       "domain": "story",
-      "promptText": "Family Story: Evening tea together",
-      "spokenPrompt": "Evening story. You and {{family0.label}} sit for Assam tea. {{family1.label}} brings pitha. Let’s begin.",
+      "promptText": "Family story: evening tea with {{family0.label}}.",
+      "spokenPrompt": "You and {{family0.label}} sit for tea. {{family1.label}} brings pitha. Let’s begin.",
       "continueLabel": "Start story",
+      "continueKicker": "Reminiscence",
       "autoCorrect": true,
       "media": {
         "kind": "family",
@@ -224,141 +359,45 @@
       }
     },
     {
-      "id": "e1-story-orient",
-      "itemType": "story_quiz",
-      "domain": "orientation",
-      "promptText": "In our story — what time of day is it?",
-      "spokenPrompt": "In our story — what time of day is it?",
-      "expectedAnswers": [
-        "evening",
-        "night",
-        "dusk"
-      ],
-      "chipOptions": [
-        "Morning",
-        "Evening",
-        "Noon",
-        "Midnight"
-      ],
-      "hintText": "Evening.",
-      "media": {
-        "kind": "image",
-        "image": "evening.jpg",
-        "caption": "Evening"
-      }
-    },
-    {
-      "id": "e1-story-who",
+      "id": "e1-story-who-1",
       "itemType": "story_quiz",
       "domain": "language",
       "promptText": "Who brought the pitha?",
       "spokenPrompt": "Who brought the pitha?",
       "answerFrom": "family1",
       "chipPool": "familyLabels",
-      "hintText": "{{family1.label}} brought the pitha.",
+      "hintText": "{{family1.label}}.",
       "media": {
         "kind": "family",
         "index": 1
       }
     },
     {
-      "id": "e1-story-mem",
+      "id": "e1-story-who-0",
       "itemType": "story_quiz",
-      "domain": "recall",
-      "promptText": "We talked about a big river this morning. Which one?",
-      "spokenPrompt": "We talked about a big river this morning. Which one?",
-      "bankItem": "brahmaputra",
-      "chipOptions": [
-        "Brahmaputra",
-        "Loktak",
-        "Ganga",
-        "Tea garden"
-      ],
-      "hintText": "Brahmaputra."
-    },
-    {
-      "id": "e1-story-attn",
-      "itemType": "attention_change",
-      "domain": "attention",
-      "promptText": "What disappeared from the tea tray?",
-      "spokenPrompt": "Look at the tea tray. Now look again. What disappeared?",
-      "expectedAnswers": [
-        "gamusa",
-        "gamosa",
-        "towel",
-        "scarf"
-      ],
-      "chipOptions": [
-        "Gamusa",
-        "Tea cup",
-        "Pitha",
-        "Jaapi"
-      ],
-      "hintText": "The gamusa is missing.",
-      "sceneBefore": [
-        "tea_cup",
-        "pitha",
-        "gamusa",
-        "jaapi"
-      ],
-      "sceneAfter": [
-        "tea_cup",
-        "pitha",
-        "jaapi"
-      ],
-      "lookMs": 3500
-    },
-    {
-      "id": "e1-story-lang",
-      "itemType": "story_quiz",
-      "domain": "language",
-      "promptText": "What do we call this white-red cloth?",
-      "spokenPrompt": "What do we call this white-red Assamese cloth?",
-      "bankItem": "gamusa",
-      "chipOptions": [
-        "Gamusa",
-        "Jaapi",
-        "Pitha",
-        "Bihu"
-      ],
-      "hintText": "Gamusa."
-    },
-    {
-      "id": "e1-story-reason",
-      "itemType": "story_quiz",
-      "domain": "reasoning",
-      "promptText": "It is evening tea. Which does not make sense?",
-      "spokenPrompt": "Tea, pitha, gamusa, and a book of nonsense for eating — wait. Tea, pitha, bicycle, gamusa — which does not make sense for evening tea?",
-      "expectedAnswers": [
-        "bicycle",
-        "cycle",
-        "bike"
-      ],
-      "chipOptions": [
-        "Tea",
-        "Pitha",
-        "Bicycle",
-        "Gamusa"
-      ],
-      "hintText": "Bicycle does not belong.",
+      "domain": "learning_memory",
+      "promptText": "Who sat with you for tea?",
+      "spokenPrompt": "Who sat with you for Assam tea?",
+      "answerFrom": "family0",
+      "chipPool": "familyLabels",
+      "hintText": "{{family0.label}}.",
       "media": {
-        "kind": "image",
-        "image": "evening.jpg",
-        "caption": "Evening tea"
+        "kind": "family",
+        "index": 0
       }
     },
     {
       "id": "e1-finale",
       "itemType": "story_beat",
       "domain": "story",
-      "promptText": "Rest well, {{preferredName}}. Beautiful work today.",
-      "spokenPrompt": "Rest well, {{preferredName}}. You remembered Assam and your family. Good night.",
+      "promptText": "Rest well, {{preferredName}}. {{family0.label}} and {{family1.label}} love you.",
+      "spokenPrompt": "Rest well, {{preferredName}}. {{family0.label}} and {{family1.label}} love you. Good night.",
       "continueLabel": "Finish",
+      "continueKicker": "Evening done",
       "autoCorrect": true,
       "media": {
-        "kind": "image",
-        "image": "evening.jpg",
-        "caption": "Good night"
+        "kind": "family",
+        "index": 0
       }
     }
   ]

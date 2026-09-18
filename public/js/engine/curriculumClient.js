@@ -98,25 +98,20 @@
       return null;
     }
 
-    const family = (memories || []).slice(0, 4).map((m) => {
-      const label = m.shortLabel || m.short_label || 'Family';
-      const rel = m.relation && m.relation !== 'custom' ? m.relation : null;
-      const aliases = Array.isArray(m.aliases) ? m.aliases : [];
-      return {
-        id: m.id,
-        label,
-        uri: m.localUri || m.image_url,
-        expected: [label, ...aliases, rel].filter(Boolean),
-      };
-    });
-    while (family.length < 2) {
-      family.push({
-        id: null,
-        label: family.length === 0 ? 'your loved one' : 'your family',
-        uri: null,
-        expected: ['family'],
+    const family = (memories || [])
+      .filter((m) => m.localUri || m.image_url || m.imageUrl)
+      .slice(0, 4)
+      .map((m) => {
+        const label = m.shortLabel || m.short_label || 'Family';
+        const rel = m.relation && m.relation !== 'custom' ? m.relation : null;
+        const aliases = Array.isArray(m.aliases) ? m.aliases : [];
+        return {
+          id: m.id,
+          label,
+          uri: m.localUri || m.image_url || m.imageUrl,
+          expected: [label, ...aliases, rel].filter(Boolean),
+        };
       });
-    }
 
     const weekday = (bank.weekdayNames?.en || [])[new Date().getDay()] || 'Today';
     const ctx = {
@@ -126,6 +121,23 @@
       family,
     };
     const registrationIds = plan.registrationIds || [];
+    const base = (bank.imageBase || '/assets/curriculum/as').replace(/\/$/, '');
+    const culturalUri = `${base}/${sessionType === 'evening' ? 'evening' : 'morning'}.jpg`;
+    const culturalCaption = `${region.name} ${sessionType === 'evening' ? 'evening' : 'morning'}`;
+
+    function familyPhotoAt(index) {
+      const f = family[index || 0];
+      return !!(f && f.uri && f.id);
+    }
+
+    function shouldSkip(step) {
+      if (step.media?.kind === 'family' && step.itemType !== 'story_beat') {
+        if (!familyPhotoAt(step.media.index || 0)) return true;
+      }
+      if (step.answerFrom === 'family0' && !familyPhotoAt(0)) return true;
+      if (step.answerFrom === 'family1' && !familyPhotoAt(1)) return true;
+      return false;
+    }
 
     function answersFor(step) {
       if (step.expectedAnswers?.length) return step.expectedAnswers.map((a) => fillTemplate(a, ctx));
@@ -133,10 +145,22 @@
         const item = bank.items[step.bankItem];
         return [item.label, ...(item.aliases || [])];
       }
-      if (step.answerFrom === 'weekday') return [ctx.weekday];
+      if (step.answerFrom === 'weekday') {
+        const w = ctx.weekday;
+        const aliases = bank.weekdayAliases?.[w] || [];
+        const dayIdx = (bank.weekdayNames?.en || []).indexOf(w);
+        const extra = [];
+        if (dayIdx >= 0) {
+          const hi = bank.weekdayNames?.hi?.[dayIdx];
+          const as = bank.weekdayNames?.as?.[dayIdx];
+          if (hi) extra.push(hi);
+          if (as) extra.push(as);
+        }
+        return [w, String(w).toLowerCase(), ...aliases, ...extra];
+      }
       if (step.answerFrom === 'hometown') return [ctx.hometown, `from ${ctx.hometown}`];
-      if (step.answerFrom === 'family0') return family[0].expected;
-      if (step.answerFrom === 'family1') return family[1].expected;
+      if (step.answerFrom === 'family0') return family[0]?.expected || [];
+      if (step.answerFrom === 'family1') return family[1]?.expected || [];
       return [];
     }
 
@@ -160,7 +184,6 @@
     }
 
     function mediaFor(step) {
-      const base = (bank.imageBase || '/assets/curriculum/as').replace(/\/$/, '');
       if (step.bankItem) {
         const item = bank.items[step.bankItem];
         return {
@@ -172,7 +195,10 @@
       if (step.media?.kind === 'family') {
         const f = family[step.media.index || 0];
         if (f?.uri) return { kind: 'image', uri: f.uri, caption: f.label };
-        return { kind: 'image', uri: null, caption: f?.label || 'Family' };
+        if (step.itemType === 'story_beat') {
+          return { kind: 'image', uri: culturalUri, caption: culturalCaption };
+        }
+        return null;
       }
       if (step.media?.image) {
         const img = step.media.image.startsWith('/') ? step.media.image : `${base}/${step.media.image}`;
@@ -185,7 +211,6 @@
     }
 
     function scene(ids) {
-      const base = (bank.imageBase || '/assets/curriculum/as').replace(/\/$/, '');
       return (ids || []).map((id) => {
         const item = bank.items[id] || { label: id };
         return {
@@ -196,10 +221,12 @@
       });
     }
 
-    const items = plan.steps.map((step, i) => {
+    const items = [];
+    plan.steps.forEach((step, i) => {
+      if (shouldSkip(step)) return;
       const answers = answersFor(step);
       const media = mediaFor(step);
-      return {
+      items.push({
         id: crypto.randomUUID(),
         templateId: step.id,
         itemType: step.itemType,
@@ -211,18 +238,20 @@
         hintText: fillTemplate(step.hintText, ctx),
         chipOptions: step.itemType === 'story_beat' || step.itemType === 'registration_teach' ? null : chipsFor(step, answers),
         continueLabel: step.continueLabel || 'Next',
+        continueKicker: step.continueKicker || null,
         autoCorrect: !!step.autoCorrect,
-        lookMs: step.lookMs || 3000,
+        lookMs: step.lookMs || 8000,
         localUri: media?.uri || null,
         caption: media?.caption || '',
         media,
         sceneBefore: step.sceneBefore ? scene(step.sceneBefore) : null,
         sceneAfter: step.sceneAfter ? scene(step.sceneAfter) : null,
+        sequenceSteps: step.sequenceSteps || null,
         sortOrder: i,
         regionCode: region.code,
         curriculumDay: day,
-        sessionTheme: plan.theme,
-      };
+        sessionTheme: `${ctx.preferredName || 'friend'}'s ${sessionType} with family`,
+      });
     });
 
     return {
@@ -231,9 +260,10 @@
         regionCode: region.code,
         regionName: region.name,
         day,
-        theme: plan.theme,
-        title: plan.title,
+        theme: `${ctx.preferredName || 'friend'}'s ${sessionType === 'evening' ? 'evening' : 'morning'} with family`,
+        title: fillTemplate(plan.title || '', ctx),
         sessionType,
+        imageBase: bank.imageBase || `/assets/curriculum/${region.code}`,
       },
     };
   }

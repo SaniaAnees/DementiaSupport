@@ -6,7 +6,17 @@
   "imageBase": "/assets/curriculum/as",
   "weekdayNames": {
     "en": ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
-    "as": ["Robibar", "Sombar", "Mongolbar", "Budhbar", "Brihospotibar", "Xukurbar", "Xonibar"]
+    "as": ["Robibar", "Sombar", "Mongolbar", "Budhbar", "Brihospotibar", "Xukurbar", "Xonibar"],
+    "hi": ["Ravivar", "Somvar", "Mangalvar", "Budhvar", "Guruvar", "Shukravar", "Shanivar"]
+  },
+  "weekdayAliases": {
+    "Sunday": ["ravivar", "robi bar", "robibar", "रविवार"],
+    "Monday": ["somvar", "sombar", "सोमवार"],
+    "Tuesday": ["mangalvar", "mongolbar", "मंगलवार"],
+    "Wednesday": ["budhvar", "budhbar", "बुधवार"],
+    "Thursday": ["guruvar", "brihospotibar", "गुरुवार"],
+    "Friday": ["shukravar", "shukravaar", "xukurbar", "shukkar", "शुक्रवार", "friday"],
+    "Saturday": ["shanivar", "xonibar", "शनिवार"]
   },
   "items": {
     "pitha": {

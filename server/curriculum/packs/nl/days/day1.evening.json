@@ -1,0 +1,404 @@
+{
+  "day": 1,
+  "sessionType": "evening",
+  "theme": "{{preferredName}}’s evening with family",
+  "title": "Nagaland evening — teach, then play",
+  "clinicalFramework": "DSM-5-TR Major/Mild Neurocognitive Disorder domains",
+  "registrationIds": [
+    "smoked_pork",
+    "dzukou",
+    "hornbill"
+  ],
+  "steps": [
+    {
+      "id": "e1-welcome",
+      "itemType": "story_beat",
+      "domain": "story",
+      "promptText": "Good evening, {{preferredName}}. First a gentle reminder — then games.",
+      "spokenPrompt": "Good evening, {{preferredName}}. First a gentle reminder of today’s words, then games. Ready?",
+      "continueLabel": "I’m ready",
+      "continueKicker": "Teach first",
+      "autoCorrect": true,
+      "media": {
+        "kind": "image",
+        "image": "evening.jpg",
+        "caption": "Nagaland evening"
+      }
+    },
+    {
+      "id": "e1-teach-family-0",
+      "itemType": "registration_teach",
+      "domain": "learning_memory",
+      "promptText": "This is {{family0.label}}. Look again. Remember.",
+      "spokenPrompt": "This is {{family0.label}}. Look again. Say {{family0.label}}.",
+      "continueLabel": "Next",
+      "continueKicker": "Family reminder",
+      "autoCorrect": true,
+      "media": {
+        "kind": "family",
+        "index": 0
+      }
+    },
+    {
+      "id": "e1-teach-family-1",
+      "itemType": "registration_teach",
+      "domain": "learning_memory",
+      "promptText": "This is {{family1.label}}. Look carefully.",
+      "spokenPrompt": "This is {{family1.label}}. Say {{family1.label}}.",
+      "continueLabel": "Next",
+      "continueKicker": "Family reminder",
+      "autoCorrect": true,
+      "media": {
+        "kind": "family",
+        "index": 1
+      }
+    },
+    {
+      "id": "e1-teach-food",
+      "itemType": "registration_teach",
+      "domain": "learning_memory",
+      "bankItem": "smoked_pork",
+      "promptText": "From this morning — Smoked pork. Say Smoked pork.",
+      "spokenPrompt": "From this morning — Smoked pork. Say Smoked pork.",
+      "continueLabel": "Next",
+      "autoCorrect": true
+    },
+    {
+      "id": "e1-teach-place",
+      "itemType": "registration_teach",
+      "domain": "learning_memory",
+      "bankItem": "dzukou",
+      "promptText": "Dzukou. Say Dzukou.",
+      "spokenPrompt": "Dzukou. Say Dzukou.",
+      "continueLabel": "Next",
+      "autoCorrect": true
+    },
+    {
+      "id": "e1-teach-fest",
+      "itemType": "registration_teach",
+      "domain": "learning_memory",
+      "bankItem": "hornbill",
+      "promptText": "Hornbill — our festival. Say Hornbill.",
+      "spokenPrompt": "Hornbill. Say Hornbill.",
+      "continueLabel": "Next",
+      "autoCorrect": true
+    },
+    {
+      "id": "e1-teach-cloth",
+      "itemType": "registration_teach",
+      "domain": "language",
+      "bankItem": "tribal_beads",
+      "promptText": "These are Naga beads. Say Naga beads.",
+      "spokenPrompt": "Naga beads. Say Naga beads with me.",
+      "continueLabel": "Next",
+      "continueKicker": "Learn the word",
+      "autoCorrect": true
+    },
+    {
+      "id": "e1-teach-done",
+      "itemType": "story_beat",
+      "domain": "story",
+      "promptText": "Good. Now evening games — use what we just reviewed.",
+      "spokenPrompt": "Good, {{preferredName}}. Now evening games.",
+      "continueLabel": "Start games",
+      "continueKicker": "Quiz time",
+      "autoCorrect": true,
+      "media": {
+        "kind": "image",
+        "image": "evening.jpg",
+        "caption": "Ready to play"
+      }
+    },
+    {
+      "id": "e1-quiz-family-0",
+      "itemType": "orientation",
+      "domain": "learning_memory",
+      "promptText": "Who is this?",
+      "spokenPrompt": "Who is this?",
+      "answerFrom": "family0",
+      "chipPool": "familyLabels",
+      "hintText": "This is {{family0.label}}.",
+      "media": {
+        "kind": "family",
+        "index": 0
+      }
+    },
+    {
+      "id": "e1-quiz-family-1",
+      "itemType": "orientation",
+      "domain": "learning_memory",
+      "promptText": "And who is this?",
+      "spokenPrompt": "And who is this?",
+      "answerFrom": "family1",
+      "chipPool": "familyLabels",
+      "hintText": "This is {{family1.label}}.",
+      "media": {
+        "kind": "family",
+        "index": 1
+      }
+    },
+    {
+      "id": "e1-quiz-fest",
+      "itemType": "recall",
+      "domain": "learning_memory",
+      "promptText": "What festival did we name?",
+      "spokenPrompt": "What festival did we name?",
+      "bankItem": "hornbill",
+      "chipPool": "registrationSet",
+      "hintText": "Hornbill."
+    },
+    {
+      "id": "e1-quiz-place",
+      "itemType": "recall",
+      "domain": "learning_memory",
+      "promptText": "Which valley did we name?",
+      "spokenPrompt": "Which valley did we name?",
+      "bankItem": "dzukou",
+      "chipPool": "registrationSet",
+      "hintText": "Dzukou."
+    },
+    {
+      "id": "e1-quiz-food",
+      "itemType": "recall",
+      "domain": "learning_memory",
+      "promptText": "What dish did we learn?",
+      "spokenPrompt": "What dish did we learn?",
+      "bankItem": "smoked_pork",
+      "chipPool": "registrationSet",
+      "hintText": "Smoked pork."
+    },
+    {
+      "id": "e1-quiz-cloth",
+      "itemType": "language",
+      "domain": "language",
+      "promptText": "What jewellery did we name?",
+      "spokenPrompt": "What jewellery did we name?",
+      "bankItem": "tribal_beads",
+      "expectedAnswers": [
+        "naga beads",
+        "beads",
+        "necklace",
+        "tribal beads"
+      ],
+      "chipOptions": [
+        "Naga beads",
+        "Hornbill",
+        "Dzukou",
+        "Bicycle"
+      ],
+      "hintText": "Naga beads."
+    },
+    {
+      "id": "e1-quiz-attn",
+      "itemType": "attention_change",
+      "domain": "complex_attention",
+      "promptText": "What is new on the evening table?",
+      "spokenPrompt": "Look at the table. Now look again. What is new?",
+      "expectedAnswers": [
+        "tea cup",
+        "cup",
+        "tea",
+        "chai"
+      ],
+      "chipOptions": [
+        "Tea cup",
+        "Smoked pork",
+        "Naga beads",
+        "Book"
+      ],
+      "hintText": "A tea cup appeared.",
+      "sceneBefore": [
+        "rice",
+        "smoked_pork",
+        "naga_shawl",
+        "tribal_beads"
+      ],
+      "sceneAfter": [
+        "rice",
+        "smoked_pork",
+        "naga_shawl",
+        "tea_cup",
+        "tribal_beads"
+      ],
+      "lookMs": 8000
+    },
+    {
+      "id": "e1-quiz-exec",
+      "itemType": "sequence_order",
+      "domain": "executive_function",
+      "promptText": "Evening wind-down — tap steps in order.",
+      "spokenPrompt": "Tap in order — wash hands, sit for tea, share a story, rest.",
+      "sequenceSteps": [
+        {
+          "id": "wash",
+          "label": "1. Wash hands"
+        },
+        {
+          "id": "tea",
+          "label": "2. Sit for tea"
+        },
+        {
+          "id": "story",
+          "label": "3. Share a story"
+        },
+        {
+          "id": "rest",
+          "label": "4. Rest"
+        }
+      ],
+      "expectedAnswers": [
+        "wash tea story rest"
+      ],
+      "hintText": "Wash → tea → story → rest.",
+      "media": {
+        "kind": "family",
+        "index": 0
+      }
+    },
+    {
+      "id": "e1-quiz-family-mid",
+      "itemType": "orientation",
+      "domain": "learning_memory",
+      "promptText": "Still with us — who is this?",
+      "spokenPrompt": "Still with us. Who is this?",
+      "answerFrom": "family1",
+      "chipPool": "familyLabels",
+      "hintText": "This is {{family1.label}}.",
+      "media": {
+        "kind": "family",
+        "index": 1
+      }
+    },
+    {
+      "id": "e1-quiz-pattern",
+      "itemType": "pattern_match",
+      "domain": "perceptual_motor",
+      "promptText": "On the tray — which does not belong?",
+      "spokenPrompt": "Hornbill, Naga beads, Naga shawl, Bicycle — which does not belong?",
+      "expectedAnswers": [
+        "bicycle",
+        "cycle",
+        "bike"
+      ],
+      "chipOptions": [
+        "Hornbill",
+        "Naga beads",
+        "Naga shawl",
+        "Bicycle"
+      ],
+      "hintText": "Bicycle.",
+      "media": {
+        "kind": "image",
+        "image": "bicycle.jpg",
+        "caption": "Odd one out"
+      }
+    },
+    {
+      "id": "e1-quiz-emotion",
+      "itemType": "emotion_quiz",
+      "domain": "social_cognition",
+      "promptText": "How might {{family0.label}} feel after calm tea?",
+      "spokenPrompt": "How might {{family0.label}} feel — peaceful or angry?",
+      "expectedAnswers": [
+        "peaceful",
+        "calm",
+        "happy",
+        "relaxed",
+        "content",
+        "shant"
+      ],
+      "chipOptions": [
+        "Peaceful",
+        "Angry",
+        "Afraid",
+        "Confused"
+      ],
+      "hintText": "Peaceful.",
+      "media": {
+        "kind": "family",
+        "index": 0
+      }
+    },
+    {
+      "id": "e1-quiz-rhythm",
+      "itemType": "rhythm_count",
+      "domain": "complex_attention",
+      "promptText": "Soft claps: how many — 2 or 3?",
+      "spokenPrompt": "Clap, clap. How many? Say two or three.",
+      "expectedAnswers": [
+        "2",
+        "two",
+        "do",
+        "२"
+      ],
+      "chipOptions": [
+        "2 claps",
+        "3 claps",
+        "4 claps",
+        "1 clap"
+      ],
+      "hintText": "Two.",
+      "media": {
+        "kind": "image",
+        "image": "evening.jpg",
+        "caption": "Soft rhythm"
+      }
+    },
+    {
+      "id": "e1-story-setup",
+      "itemType": "story_beat",
+      "domain": "story",
+      "promptText": "Family story: evening tea with {{family0.label}}.",
+      "spokenPrompt": "You and {{family0.label}} sit for tea. {{family1.label}} brings smoked pork. Let’s begin.",
+      "continueLabel": "Start story",
+      "continueKicker": "Reminiscence",
+      "autoCorrect": true,
+      "media": {
+        "kind": "family",
+        "index": 0
+      }
+    },
+    {
+      "id": "e1-story-who-1",
+      "itemType": "story_quiz",
+      "domain": "language",
+      "promptText": "Who brought the smoked pork?",
+      "spokenPrompt": "Who brought the smoked pork?",
+      "answerFrom": "family1",
+      "chipPool": "familyLabels",
+      "hintText": "{{family1.label}}.",
+      "media": {
+        "kind": "family",
+        "index": 1
+      }
+    },
+    {
+      "id": "e1-story-who-0",
+      "itemType": "story_quiz",
+      "domain": "learning_memory",
+      "promptText": "Who sat with you for tea?",
+      "spokenPrompt": "Who sat with you for black tea?",
+      "answerFrom": "family0",
+      "chipPool": "familyLabels",
+      "hintText": "{{family0.label}}.",
+      "media": {
+        "kind": "family",
+        "index": 0
+      }
+    },
+    {
+      "id": "e1-finale",
+      "itemType": "story_beat",
+      "domain": "story",
+      "promptText": "Rest well, {{preferredName}}. {{family0.label}} and {{family1.label}} love you.",
+      "spokenPrompt": "Rest well, {{preferredName}}. {{family0.label}} and {{family1.label}} love you. Good night.",
+      "continueLabel": "Finish",
+      "continueKicker": "Evening done",
+      "autoCorrect": true,
+      "media": {
+        "kind": "family",
+        "index": 0
+      }
+    }
+  ]
+}

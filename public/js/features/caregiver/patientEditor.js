@@ -30,11 +30,11 @@ const PatientEditor = {
         <h2>${isNew ? 'Add Patient' : 'Edit Patient'}</h2>
         <div class="input-group">
           <label>Full Name *</label>
-          <input type="text" id="patient-name" value="${patient?.full_name || patient?.fullName || ''}" placeholder="e.g. Anjali Devi">
+          <input type="text" id="patient-name" value="${patient?.full_name || patient?.fullName || ''}" placeholder="e.g. Devi Sharma">
         </div>
         <div class="input-group">
           <label>Preferred Name</label>
-          <input type="text" id="patient-preferred" value="${patient?.preferred_name || patient?.preferredName || ''}" placeholder="e.g. Anjali">
+          <input type="text" id="patient-preferred" value="${patient?.preferred_name || patient?.preferredName || ''}" placeholder="e.g. Devi">
         </div>
         <div class="input-group">
           <label>Age</label>
@@ -42,7 +42,7 @@ const PatientEditor = {
         </div>
         <div class="input-group">
           <label>Hometown</label>
-          <input type="text" id="patient-hometown" value="${patient?.hometown || ''}" placeholder="Imphal">
+          <input type="text" id="patient-hometown" value="${patient?.hometown || ''}" placeholder="Guwahati">
         </div>
         <div class="input-group">
           <label>Dementia Notes</label>

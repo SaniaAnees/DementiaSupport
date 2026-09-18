@@ -1,0 +1,206 @@
+{
+  "state": "tr",
+  "name": "Tripura",
+  "greeting": "Namaskar",
+  "languageCodes": [
+    "bn-IN",
+    "en-IN"
+  ],
+  "imageBase": "/assets/curriculum/tr",
+  "weekdayNames": {
+    "en": [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday"
+    ],
+    "hi": [
+      "Ravivar",
+      "Somvar",
+      "Mangalvar",
+      "Budhvar",
+      "Guruvar",
+      "Shukravar",
+      "Shanivar"
+    ]
+  },
+  "weekdayAliases": {
+    "Sunday": [
+      "ravivar",
+      "robibar",
+      "रविवार"
+    ],
+    "Monday": [
+      "somvar",
+      "sombar",
+      "सोमवार"
+    ],
+    "Tuesday": [
+      "mangalvar",
+      "मंगलवार"
+    ],
+    "Wednesday": [
+      "budhvar",
+      "बुधवार"
+    ],
+    "Thursday": [
+      "guruvar",
+      "गुरुवार"
+    ],
+    "Friday": [
+      "shukravar",
+      "shukkar",
+      "शुक्रवार",
+      "friday"
+    ],
+    "Saturday": [
+      "shanivar",
+      "शनिवार"
+    ]
+  },
+  "items": {
+    "rice": {
+      "id": "rice",
+      "label": "Rice",
+      "aliases": [
+        "rice"
+      ],
+      "caption": "Steamed rice",
+      "image": "rice.jpg"
+    },
+    "tea_cup": {
+      "id": "tea_cup",
+      "label": "Tea cup",
+      "aliases": [
+        "tea cup",
+        "cup",
+        "tea",
+        "chai"
+      ],
+      "caption": "A cup of tea",
+      "image": "tea_cup.jpg"
+    },
+    "bicycle": {
+      "id": "bicycle",
+      "label": "Bicycle",
+      "aliases": [
+        "bicycle",
+        "cycle",
+        "bike"
+      ],
+      "caption": "A bicycle",
+      "image": "bicycle.jpg"
+    },
+    "book": {
+      "id": "book",
+      "label": "Book",
+      "aliases": [
+        "book"
+      ],
+      "caption": "A book",
+      "image": "book.jpg"
+    },
+    "home": {
+      "id": "home",
+      "label": "Home",
+      "aliases": [
+        "home",
+        "house"
+      ],
+      "caption": "Home in Tripura",
+      "image": "home.jpg"
+    },
+    "morning": {
+      "id": "morning",
+      "label": "Morning",
+      "aliases": [
+        "morning"
+      ],
+      "caption": "Morning in Agartala",
+      "image": "morning.jpg"
+    },
+    "evening": {
+      "id": "evening",
+      "label": "Evening",
+      "aliases": [
+        "evening"
+      ],
+      "caption": "Evening by the lake",
+      "image": "evening.jpg"
+    },
+    "ujjayanta": {
+      "id": "ujjayanta",
+      "label": "Ujjayanta",
+      "aliases": [
+        "ujjayanta",
+        "palace"
+      ],
+      "caption": "Ujjayanta Palace",
+      "image": "ujjayanta.jpg"
+    },
+    "mui_borok": {
+      "id": "mui_borok",
+      "label": "Mui borok",
+      "aliases": [
+        "mui borok",
+        "borok food",
+        "tripuri food"
+      ],
+      "caption": "Traditional Tripuri mui borok meal",
+      "image": "mui_borok.jpg"
+    },
+    "neermahal": {
+      "id": "neermahal",
+      "label": "Neermahal",
+      "aliases": [
+        "neermahal",
+        "water palace",
+        "palace"
+      ],
+      "caption": "Neermahal — the water palace",
+      "image": "neermahal.jpg"
+    },
+    "kharchi": {
+      "id": "kharchi",
+      "label": "Kharchi",
+      "aliases": [
+        "kharchi",
+        "kharchi puja",
+        "festival"
+      ],
+      "caption": "Kharchi Puja of Tripura",
+      "image": "kharchi.jpg"
+    },
+    "risha": {
+      "id": "risha",
+      "label": "Risha",
+      "aliases": [
+        "risha",
+        "tripuri wrap",
+        "shawl"
+      ],
+      "caption": "Traditional Tripuri risha",
+      "image": "risha.jpg"
+    },
+    "pachra": {
+      "id": "pachra",
+      "label": "Pachra",
+      "aliases": [
+        "pachra",
+        "tripuri cloth"
+      ],
+      "caption": "Tripuri pachra cloth",
+      "image": "pachra.jpg"
+    }
+  },
+  "distractHometowns": [
+    "Guwahati",
+    "Shillong",
+    "Imphal",
+    "Aizawl",
+    "Kohima"
+  ]
+}

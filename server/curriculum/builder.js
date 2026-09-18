@@ -28,6 +28,7 @@ function loadJson(filePath) {
 }
 
 function packExists(stateCode) {
+  if (!stateCode || typeof stateCode !== 'string') return false;
   return fs.existsSync(path.join(PACKS_ROOT, stateCode, 'bank.json'));
 }
 
@@ -60,15 +61,25 @@ function weekdayLabel(bank, date = new Date()) {
 
 function fillTemplate(str, ctx) {
   if (!str) return str;
-  return String(str).replace(/\{\{([^}]+)\}\}/g, (_, key) => {
-    const k = key.trim();
-    if (k === 'preferredName') return ctx.preferredName || 'friend';
-    if (k === 'hometown') return ctx.hometown || 'home';
-    if (k === 'weekday') return ctx.weekday;
-    if (k === 'family0.label') return ctx.family[0]?.label || 'your family';
-    if (k === 'family1.label') return ctx.family[1]?.label || 'your family';
+  return String(str).replace(/\{\{\s*([^}]+?)\s*\}\}/g, (_, key) => {
+    const k = String(key).trim().replace(/\u2019/g, "'");
+    const low = k.toLowerCase();
+    if (low === 'preferredname' || low === 'preferred_name' || low === 'name') {
+      return ctx.preferredName || 'friend';
+    }
+    if (low === 'hometown') return ctx.hometown || 'home';
+    if (low === 'weekday') return ctx.weekday || '';
+    if (low === 'family0.label' || low === 'family0') return ctx.family[0]?.label || 'your family';
+    if (low === 'family1.label' || low === 'family1') return ctx.family[1]?.label || 'your family';
     return '';
   });
+}
+
+function personalTheme(sessionType, ctx) {
+  const name = ctx.preferredName || 'friend';
+  return sessionType === 'evening'
+    ? `${name}'s evening with family`
+    : `${name}'s morning with family`;
 }
 
 function itemImageUrl(bank, item) {
@@ -97,7 +108,19 @@ function resolveAnswers(step, ctx, bank) {
     const item = bank.items[step.bankItem];
     return [item.label, ...(item.aliases || [])];
   }
-  if (step.answerFrom === 'weekday') return [ctx.weekday, ctx.weekday.toLowerCase()];
+  if (step.answerFrom === 'weekday') {
+    const w = ctx.weekday;
+    const aliases = bank.weekdayAliases?.[w] || [];
+    const hiNames = bank.weekdayNames?.hi || [];
+    const asNames = bank.weekdayNames?.as || [];
+    const dayIdx = (bank.weekdayNames?.en || []).indexOf(w);
+    const extra = [];
+    if (dayIdx >= 0) {
+      if (hiNames[dayIdx]) extra.push(hiNames[dayIdx], hiNames[dayIdx].toLowerCase());
+      if (asNames[dayIdx]) extra.push(asNames[dayIdx], asNames[dayIdx].toLowerCase());
+    }
+    return [w, w.toLowerCase(), ...aliases, ...extra];
+  }
   if (step.answerFrom === 'hometown') {
     return [ctx.hometown, `from ${ctx.hometown}`].filter(Boolean);
   }
@@ -145,7 +168,8 @@ function resolveMedia(step, ctx, bank) {
     if (f?.uri) {
       return { kind: 'image', uri: f.uri, caption: f.label };
     }
-    return { kind: 'image', uri: null, caption: f?.label || 'Family' };
+    // Never show landscapes for face steps — caller should skip these
+    return null;
   }
   if (step.media.bankItem || step.media.kind === 'bank') {
     return bankMedia(bank, step.media.bankItem || step.media.id);
@@ -163,6 +187,33 @@ function resolveMedia(step, ctx, bank) {
     uri: step.media.uri || null,
     caption: fillTemplate(step.media.caption, ctx),
   };
+}
+
+/** Face ID / family teach-quiz requires a real uploaded photo at that index */
+function familyPhotoAt(family, index) {
+  const f = family[index || 0];
+  return !!(f && f.uri && f.id);
+}
+
+function shouldSkipStep(step, family) {
+  if (step.media?.kind === 'family') {
+    const idx = step.media.index || 0;
+    // Story beats with family media are rewritten to cultural images — don't skip
+    if (step.itemType === 'story_beat') return false;
+    if (!familyPhotoAt(family, idx)) return true;
+  }
+  if (step.answerFrom === 'family0' && !familyPhotoAt(family, 0)) return true;
+  if (step.answerFrom === 'family1' && !familyPhotoAt(family, 1)) return true;
+  return false;
+}
+
+function culturalSlotImage(bank, sessionType) {
+  const key = sessionType === 'evening' ? 'evening' : 'morning';
+  return (
+    itemImageUrl(bank, bank.items?.[key]) ||
+    itemImageUrl(bank, bank.items?.home) ||
+    itemImageUrl(bank, bank.items?.rice)
+  );
 }
 
 function sceneObjects(ids, bank) {
@@ -202,35 +253,28 @@ function buildCurriculumSession(patient, memories, sessionType) {
   if (!fs.existsSync(dayPath)) return null;
 
   const plan = loadJson(dayPath);
-  const family = (memories || []).slice(0, 4).map((m) => {
-    const label = m.shortLabel || m.short_label || m.caption || 'Family';
-    const rel = m.relation && m.relation !== 'custom' ? m.relation : null;
-    const aliases = Array.isArray(m.aliases)
-      ? m.aliases
-      : (() => {
-          try {
-            return JSON.parse(m.aliases || '[]');
-          } catch {
-            return [];
-          }
-        })();
-    return {
-      id: m.id,
-      label,
-      uri: m.localUri || m.image_url || m.imageUrl,
-      expected: [label, ...aliases, rel].filter(Boolean),
-    };
-  });
-
-  // Ensure at least 2 family slots for story casting
-  while (family.length < 2) {
-    family.push({
-      id: null,
-      label: family.length === 0 ? 'your loved one' : 'your family',
-      uri: null,
-      expected: family.length === 0 ? ['loved one', 'family'] : ['family'],
+  const family = (memories || [])
+    .filter((m) => m.localUri || m.image_url || m.imageUrl)
+    .slice(0, 4)
+    .map((m) => {
+      const label = m.shortLabel || m.short_label || m.caption || 'Family';
+      const rel = m.relation && m.relation !== 'custom' ? m.relation : null;
+      const aliases = Array.isArray(m.aliases)
+        ? m.aliases
+        : (() => {
+            try {
+              return JSON.parse(m.aliases || '[]');
+            } catch {
+              return [];
+            }
+          })();
+      return {
+        id: m.id,
+        label,
+        uri: m.localUri || m.image_url || m.imageUrl,
+        expected: [label, ...aliases, rel].filter(Boolean),
+      };
     });
-  }
 
   const ctx = {
     preferredName: patient.preferred_name || patient.preferredName || patient.full_name || patient.fullName || 'friend',
@@ -242,26 +286,33 @@ function buildCurriculumSession(patient, memories, sessionType) {
 
   const registrationIds = plan.registrationIds || [];
   const items = [];
+  const culturalUri = culturalSlotImage(bank, sessionType);
+  const culturalCaption = sessionType === 'evening' ? `${region.name} evening` : `${region.name} morning`;
 
   for (const rawStep of plan.steps) {
-    const step = applySpokenLocale(rawStep, patient.language_code || patient.languageCode);
-    // Skip family-photo questions if no real memories
-    if (
-      (step.answerFrom === 'family0' || step.media?.kind === 'family') &&
-      !memories?.length &&
-      step.itemType !== 'story_beat'
-    ) {
-      if (step.answerFrom?.startsWith('family') || step.media?.kind === 'family') {
-        // Still allow with placeholder expected answers
-      }
-    }
+    const step = applySpokenLocale(
+      rawStep,
+      patient.language_code || patient.languageCode || 'en-IN'
+    );
+
+    if (shouldSkipStep(step, family)) continue;
 
     const answers = resolveAnswers(step, ctx, bank);
     const chipOptions =
       step.itemType === 'story_beat' || step.itemType === 'registration_teach'
         ? null
         : resolveChips(step, answers, ctx, bank, registrationIds);
-    const media = resolveMedia(step, ctx, bank);
+
+    let media = resolveMedia(step, ctx, bank);
+    // Welcome / story beats: use cultural photo when no family portrait
+    if (
+      step.itemType === 'story_beat' &&
+      step.media?.kind === 'family' &&
+      !media?.uri &&
+      culturalUri
+    ) {
+      media = { kind: 'image', uri: culturalUri, caption: culturalCaption };
+    }
 
     const item = {
       id: randomUUID(),
@@ -280,17 +331,19 @@ function buildCurriculumSession(patient, memories, sessionType) {
       hintText: fillTemplate(step.hintText, ctx),
       chipOptions,
       continueLabel: step.continueLabel || 'Next',
+      continueKicker: step.continueKicker || null,
       autoCorrect: !!step.autoCorrect,
-      lookMs: step.lookMs || 3000,
+      lookMs: step.lookMs || 8000,
       localUri: media?.uri || null,
       caption: media?.caption || '',
       media,
       sceneBefore: step.sceneBefore ? sceneObjects(step.sceneBefore, bank) : null,
       sceneAfter: step.sceneAfter ? sceneObjects(step.sceneAfter, bank) : null,
+      sequenceSteps: step.sequenceSteps || null,
       regionCode: region.code,
       packCode,
       curriculumDay: day,
-      sessionTheme: plan.theme,
+      sessionTheme: personalTheme(sessionType, ctx),
     };
 
     items.push(item);
@@ -303,9 +356,10 @@ function buildCurriculumSession(patient, memories, sessionType) {
       regionName: region.name,
       packCode,
       day,
-      theme: plan.theme,
-      title: plan.title,
+      theme: personalTheme(sessionType, ctx),
+      title: fillTemplate(plan.title || '', ctx),
       sessionType,
+      imageBase: bank.imageBase || `/assets/curriculum/${packCode}`,
     },
   };
 }

@@ -6,9 +6,10 @@
  * @returns {{ state: string, message: string }}
  */
 function classifyTrend(sessions) {
+  const when = (s) => s.startedAt || s.started_at || s.createdAt || s.created_at || '';
   const scored = sessions
     .filter((s) => s.status === 'completed' && s.accuracy != null)
-    .sort((a, b) => (a.startedAt || a.createdAt || '').localeCompare(b.startedAt || b.createdAt || ''));
+    .sort((a, b) => when(a).localeCompare(when(b)));
 
   if (scored.length < 3) {
     return {

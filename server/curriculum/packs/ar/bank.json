@@ -1,0 +1,206 @@
+{
+  "state": "ar",
+  "name": "Arunachal Pradesh",
+  "greeting": "Jullay",
+  "languageCodes": [
+    "en-IN"
+  ],
+  "imageBase": "/assets/curriculum/ar",
+  "weekdayNames": {
+    "en": [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday"
+    ],
+    "hi": [
+      "Ravivar",
+      "Somvar",
+      "Mangalvar",
+      "Budhvar",
+      "Guruvar",
+      "Shukravar",
+      "Shanivar"
+    ]
+  },
+  "weekdayAliases": {
+    "Sunday": [
+      "ravivar",
+      "robibar",
+      "रविवार"
+    ],
+    "Monday": [
+      "somvar",
+      "sombar",
+      "सोमवार"
+    ],
+    "Tuesday": [
+      "mangalvar",
+      "मंगलवार"
+    ],
+    "Wednesday": [
+      "budhvar",
+      "बुधवार"
+    ],
+    "Thursday": [
+      "guruvar",
+      "गुरुवार"
+    ],
+    "Friday": [
+      "shukravar",
+      "shukkar",
+      "शुक्रवार",
+      "friday"
+    ],
+    "Saturday": [
+      "shanivar",
+      "शनिवार"
+    ]
+  },
+  "items": {
+    "rice": {
+      "id": "rice",
+      "label": "Rice",
+      "aliases": [
+        "rice"
+      ],
+      "caption": "Steamed rice",
+      "image": "rice.jpg"
+    },
+    "tea_cup": {
+      "id": "tea_cup",
+      "label": "Tea cup",
+      "aliases": [
+        "tea cup",
+        "cup",
+        "tea",
+        "butter tea"
+      ],
+      "caption": "A cup of tea",
+      "image": "tea_cup.jpg"
+    },
+    "bicycle": {
+      "id": "bicycle",
+      "label": "Bicycle",
+      "aliases": [
+        "bicycle",
+        "cycle",
+        "bike"
+      ],
+      "caption": "A bicycle",
+      "image": "bicycle.jpg"
+    },
+    "book": {
+      "id": "book",
+      "label": "Book",
+      "aliases": [
+        "book"
+      ],
+      "caption": "A book",
+      "image": "book.jpg"
+    },
+    "home": {
+      "id": "home",
+      "label": "Home",
+      "aliases": [
+        "home",
+        "house"
+      ],
+      "caption": "Home in Arunachal",
+      "image": "home.jpg"
+    },
+    "morning": {
+      "id": "morning",
+      "label": "Morning",
+      "aliases": [
+        "morning"
+      ],
+      "caption": "Morning in the hills",
+      "image": "morning.jpg"
+    },
+    "evening": {
+      "id": "evening",
+      "label": "Evening",
+      "aliases": [
+        "evening"
+      ],
+      "caption": "Evening near Tawang",
+      "image": "evening.jpg"
+    },
+    "ziro": {
+      "id": "ziro",
+      "label": "Ziro",
+      "aliases": [
+        "ziro",
+        "ziro valley"
+      ],
+      "caption": "Ziro Valley",
+      "image": "ziro.jpg"
+    },
+    "thukpa": {
+      "id": "thukpa",
+      "label": "Thukpa",
+      "aliases": [
+        "thukpa",
+        "noodle soup",
+        "soup"
+      ],
+      "caption": "Warm Himalayan thukpa",
+      "image": "thukpa.jpg"
+    },
+    "tawang": {
+      "id": "tawang",
+      "label": "Tawang",
+      "aliases": [
+        "tawang",
+        "tawang monastery",
+        "monastery"
+      ],
+      "caption": "Tawang Monastery",
+      "image": "tawang.jpg"
+    },
+    "losar": {
+      "id": "losar",
+      "label": "Losar",
+      "aliases": [
+        "losar",
+        "new year",
+        "festival"
+      ],
+      "caption": "Losar — New Year festival",
+      "image": "losar.jpg"
+    },
+    "gale": {
+      "id": "gale",
+      "label": "Gale",
+      "aliases": [
+        "gale",
+        "apai",
+        "arunachal wrap"
+      ],
+      "caption": "Traditional Arunachal gale wrap",
+      "image": "gale.jpg"
+    },
+    "shawl_ar": {
+      "id": "shawl_ar",
+      "label": "Tribal shawl",
+      "aliases": [
+        "tribal shawl",
+        "shawl",
+        "wool shawl"
+      ],
+      "caption": "Warm tribal shawl of Arunachal",
+      "image": "shawl_ar.jpg"
+    }
+  },
+  "distractHometowns": [
+    "Guwahati",
+    "Shillong",
+    "Kohima",
+    "Imphal",
+    "Aizawl"
+  ]
+}

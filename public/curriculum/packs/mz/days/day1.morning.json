@@ -1,0 +1,403 @@
+{
+  "day": 1,
+  "sessionType": "morning",
+  "theme": "{{preferredName}}’s morning with family",
+  "title": "Mizoram morning — teach, then play",
+  "clinicalFramework": "DSM-5-TR Major/Mild Neurocognitive Disorder domains",
+  "registrationIds": [
+    "bai",
+    "phawngpui",
+    "chapchar_kut"
+  ],
+  "steps": [
+    {
+      "id": "m1-welcome",
+      "itemType": "story_beat",
+      "domain": "story",
+      "promptText": "Chibai, {{preferredName}}. First we learn together — then we play.",
+      "spokenPrompt": "Chibai, {{preferredName}}. First we learn together, then we play. Ready?",
+      "continueLabel": "I’m ready",
+      "continueKicker": "Teach first",
+      "autoCorrect": true,
+      "media": {
+        "kind": "image",
+        "image": "morning.jpg",
+        "caption": "Mizoram morning"
+      }
+    },
+    {
+      "id": "m1-teach-family-0",
+      "itemType": "registration_teach",
+      "domain": "learning_memory",
+      "promptText": "This is {{family0.label}}. Look carefully. Remember their face.",
+      "spokenPrompt": "This is {{family0.label}}. Look carefully. Say {{family0.label}} with me.",
+      "continueLabel": "Next",
+      "continueKicker": "Meet your family",
+      "autoCorrect": true,
+      "media": {
+        "kind": "family",
+        "index": 0
+      }
+    },
+    {
+      "id": "m1-teach-family-1",
+      "itemType": "registration_teach",
+      "domain": "learning_memory",
+      "promptText": "This is {{family1.label}}. Look carefully. Remember their face.",
+      "spokenPrompt": "This is {{family1.label}}. Look carefully. Say {{family1.label}} with me.",
+      "continueLabel": "Next",
+      "continueKicker": "Meet your family",
+      "autoCorrect": true,
+      "media": {
+        "kind": "family",
+        "index": 1
+      }
+    },
+    {
+      "id": "m1-teach-dress",
+      "itemType": "registration_teach",
+      "domain": "language",
+      "bankItem": "puan",
+      "promptText": "This is Puan — Mizo traditional wrap. Say Puan.",
+      "spokenPrompt": "This is Puan. Say Puan with me.",
+      "continueLabel": "Next",
+      "continueKicker": "Learn the word",
+      "autoCorrect": true
+    },
+    {
+      "id": "m1-teach-food",
+      "itemType": "registration_teach",
+      "domain": "learning_memory",
+      "bankItem": "bai",
+      "promptText": "This is Bai — a Mizo dish. Say Bai.",
+      "spokenPrompt": "This is Bai. Say Bai with me.",
+      "continueLabel": "Next",
+      "autoCorrect": true
+    },
+    {
+      "id": "m1-teach-place",
+      "itemType": "registration_teach",
+      "domain": "learning_memory",
+      "bankItem": "phawngpui",
+      "promptText": "This is Phawngpui — the Blue Mountain. Say Phawngpui.",
+      "spokenPrompt": "This is Phawngpui. Say Phawngpui.",
+      "continueLabel": "Next",
+      "autoCorrect": true
+    },
+    {
+      "id": "m1-teach-fest",
+      "itemType": "registration_teach",
+      "domain": "learning_memory",
+      "bankItem": "chapchar_kut",
+      "promptText": "This is Chapchar Kut — Mizoram’s festival. Say Chapchar Kut.",
+      "spokenPrompt": "Chapchar Kut. Say Chapchar Kut.",
+      "continueLabel": "Next",
+      "autoCorrect": true
+    },
+    {
+      "id": "m1-teach-done",
+      "itemType": "story_beat",
+      "domain": "story",
+      "promptText": "Beautiful. Now let’s play — remember what we just learned.",
+      "spokenPrompt": "Beautiful, {{preferredName}}. Now let’s play. Remember what we just learned.",
+      "continueLabel": "Start games",
+      "continueKicker": "Quiz time",
+      "autoCorrect": true,
+      "media": {
+        "kind": "image",
+        "image": "morning.jpg",
+        "caption": "Ready to play"
+      }
+    },
+    {
+      "id": "m1-quiz-family-0",
+      "itemType": "orientation",
+      "domain": "learning_memory",
+      "promptText": "Who is this?",
+      "spokenPrompt": "Who is this? Say their name.",
+      "answerFrom": "family0",
+      "chipPool": "familyLabels",
+      "hintText": "This is {{family0.label}}.",
+      "media": {
+        "kind": "family",
+        "index": 0
+      }
+    },
+    {
+      "id": "m1-quiz-family-1",
+      "itemType": "orientation",
+      "domain": "learning_memory",
+      "promptText": "And who is this?",
+      "spokenPrompt": "And who is this?",
+      "answerFrom": "family1",
+      "chipPool": "familyLabels",
+      "hintText": "This is {{family1.label}}.",
+      "media": {
+        "kind": "family",
+        "index": 1
+      }
+    },
+    {
+      "id": "m1-quiz-dress",
+      "itemType": "language",
+      "domain": "language",
+      "promptText": "What is this Mizo wrap called?",
+      "spokenPrompt": "What is this Mizo wrap called?",
+      "bankItem": "puan",
+      "expectedAnswers": [
+        "puan",
+        "mizo puan",
+        "wrap"
+      ],
+      "chipOptions": [
+        "Puan",
+        "Bai",
+        "Chapchar Kut",
+        "Book"
+      ],
+      "hintText": "Puan."
+    },
+    {
+      "id": "m1-quiz-rhythm",
+      "itemType": "rhythm_count",
+      "domain": "complex_attention",
+      "promptText": "Khuang drum: how many beats — 3 or 4?",
+      "spokenPrompt": "Khuang drum — beat, beat, beat. How many? Say three or four.",
+      "expectedAnswers": [
+        "3",
+        "three",
+        "teen",
+        "३"
+      ],
+      "chipOptions": [
+        "3 beats",
+        "4 beats",
+        "2 beats",
+        "5 beats"
+      ],
+      "hintText": "Three beats.",
+      "media": {
+        "kind": "image",
+        "image": "chapchar_kut.jpg",
+        "caption": "Khuang drum"
+      }
+    },
+    {
+      "id": "m1-quiz-attn",
+      "itemType": "attention_change",
+      "domain": "complex_attention",
+      "promptText": "What disappeared from the breakfast table?",
+      "spokenPrompt": "Look at the table. Now look again. What disappeared?",
+      "expectedAnswers": [
+        "tea cup",
+        "cup",
+        "tea",
+        "chai"
+      ],
+      "chipOptions": [
+        "Tea cup",
+        "Puan",
+        "Rice",
+        "Bai"
+      ],
+      "hintText": "The tea cup is missing.",
+      "sceneBefore": [
+        "rice",
+        "bai",
+        "puan",
+        "tea_cup",
+        "hnipui"
+      ],
+      "sceneAfter": [
+        "rice",
+        "bai",
+        "puan",
+        "hnipui"
+      ],
+      "lookMs": 8000
+    },
+    {
+      "id": "m1-quiz-exec",
+      "itemType": "sequence_order",
+      "domain": "executive_function",
+      "promptText": "evening tea — tap the steps in order.",
+      "spokenPrompt": "Making evening tea. Tap in order — boil water, add leaves, pour, then sip.",
+      "sequenceSteps": [
+        {
+          "id": "boil",
+          "label": "1. Boil water"
+        },
+        {
+          "id": "leaves",
+          "label": "2. Add leaves"
+        },
+        {
+          "id": "pour",
+          "label": "3. Pour into cup"
+        },
+        {
+          "id": "sip",
+          "label": "4. Sip slowly"
+        }
+      ],
+      "expectedAnswers": [
+        "boil leaves pour sip",
+        "1 2 3 4"
+      ],
+      "hintText": "Boil → leaves → pour → sip.",
+      "media": {
+        "kind": "image",
+        "image": "tea_cup.jpg",
+        "caption": "evening tea"
+      }
+    },
+    {
+      "id": "m1-quiz-food",
+      "itemType": "recall",
+      "domain": "learning_memory",
+      "promptText": "What dish did we learn?",
+      "spokenPrompt": "What dish did we learn?",
+      "bankItem": "bai",
+      "chipPool": "registrationSet",
+      "hintText": "Bai."
+    },
+    {
+      "id": "m1-quiz-place",
+      "itemType": "recall",
+      "domain": "learning_memory",
+      "promptText": "Which mountain did we name?",
+      "spokenPrompt": "Which mountain did we name?",
+      "bankItem": "phawngpui",
+      "chipPool": "registrationSet",
+      "hintText": "Phawngpui."
+    },
+    {
+      "id": "m1-quiz-family-mid",
+      "itemType": "orientation",
+      "domain": "learning_memory",
+      "promptText": "Look again — who is this?",
+      "spokenPrompt": "Look again. Who is this?",
+      "answerFrom": "family0",
+      "chipPool": "familyLabels",
+      "hintText": "This is {{family0.label}}.",
+      "media": {
+        "kind": "family",
+        "index": 0
+      }
+    },
+    {
+      "id": "m1-quiz-fest",
+      "itemType": "recall",
+      "domain": "learning_memory",
+      "promptText": "Which festival did we remember?",
+      "spokenPrompt": "Which festival did we remember?",
+      "bankItem": "chapchar_kut",
+      "chipPool": "registrationSet",
+      "hintText": "Chapchar Kut."
+    },
+    {
+      "id": "m1-quiz-pattern",
+      "itemType": "pattern_match",
+      "domain": "perceptual_motor",
+      "promptText": "Which belongs with Mizo dress — puan or bicycle?",
+      "spokenPrompt": "Which belongs with Mizo dress — puan or bicycle?",
+      "expectedAnswers": [
+        "puan"
+      ],
+      "chipOptions": [
+        "Puan",
+        "Bicycle",
+        "Book",
+        "Clock"
+      ],
+      "hintText": "puan.",
+      "media": {
+        "kind": "image",
+        "image": "puan.jpg",
+        "caption": "Pattern"
+      }
+    },
+    {
+      "id": "m1-quiz-emotion",
+      "itemType": "emotion_quiz",
+      "domain": "social_cognition",
+      "promptText": "Look at {{family0.label}}. Happy or sad?",
+      "spokenPrompt": "Look at {{family0.label}}. How do they feel — happy or sad?",
+      "expectedAnswers": [
+        "happy",
+        "glad",
+        "smiling",
+        "joy",
+        "khush",
+        "खुश"
+      ],
+      "chipOptions": [
+        "Happy",
+        "Sad",
+        "Angry",
+        "Afraid"
+      ],
+      "hintText": "Happy.",
+      "media": {
+        "kind": "family",
+        "index": 0
+      }
+    },
+    {
+      "id": "m1-story-setup",
+      "itemType": "story_beat",
+      "domain": "story",
+      "promptText": "Family story: morning with {{family0.label}} and bai.",
+      "spokenPrompt": "Family story. {{family0.label}} made bai. Let’s begin.",
+      "continueLabel": "Start story",
+      "continueKicker": "Reminiscence",
+      "autoCorrect": true,
+      "media": {
+        "kind": "family",
+        "index": 0
+      }
+    },
+    {
+      "id": "m1-story-who",
+      "itemType": "story_quiz",
+      "domain": "language",
+      "promptText": "Who made bai with you?",
+      "spokenPrompt": "Who made bai with you?",
+      "answerFrom": "family0",
+      "chipPool": "familyLabels",
+      "hintText": "{{family0.label}}.",
+      "media": {
+        "kind": "family",
+        "index": 0
+      }
+    },
+    {
+      "id": "m1-story-who-2",
+      "itemType": "story_quiz",
+      "domain": "learning_memory",
+      "promptText": "{{family1.label}} went to Aizawl market. Who went?",
+      "spokenPrompt": "{{family1.label}} went to Aizawl market. Who went?",
+      "answerFrom": "family1",
+      "chipPool": "familyLabels",
+      "hintText": "{{family1.label}}.",
+      "media": {
+        "kind": "family",
+        "index": 1
+      }
+    },
+    {
+      "id": "m1-finale",
+      "itemType": "story_beat",
+      "domain": "story",
+      "promptText": "Wonderful, {{preferredName}}. {{family0.label}} is proud of you.",
+      "spokenPrompt": "Wonderful, {{preferredName}}. {{family0.label}} is proud of you. See you this evening.",
+      "continueLabel": "Finish",
+      "continueKicker": "Morning done",
+      "autoCorrect": true,
+      "media": {
+        "kind": "family",
+        "index": 0
+      }
+    }
+  ]
+}

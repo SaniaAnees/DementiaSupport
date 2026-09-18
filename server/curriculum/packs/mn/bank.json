@@ -1,0 +1,209 @@
+{
+  "state": "mn",
+  "name": "Manipur",
+  "greeting": "Khurumjari",
+  "languageCodes": [
+    "mni-IN",
+    "en-IN"
+  ],
+  "imageBase": "/assets/curriculum/mn",
+  "weekdayNames": {
+    "en": [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday"
+    ],
+    "hi": [
+      "Ravivar",
+      "Somvar",
+      "Mangalvar",
+      "Budhvar",
+      "Guruvar",
+      "Shukravar",
+      "Shanivar"
+    ]
+  },
+  "weekdayAliases": {
+    "Sunday": [
+      "ravivar",
+      "robibar",
+      "रविवार"
+    ],
+    "Monday": [
+      "somvar",
+      "sombar",
+      "सोमवार"
+    ],
+    "Tuesday": [
+      "mangalvar",
+      "मंगलवार"
+    ],
+    "Wednesday": [
+      "budhvar",
+      "बुधवार"
+    ],
+    "Thursday": [
+      "guruvar",
+      "गुरुवार"
+    ],
+    "Friday": [
+      "shukravar",
+      "shukkar",
+      "शुक्रवार",
+      "friday"
+    ],
+    "Saturday": [
+      "shanivar",
+      "शनिवार"
+    ]
+  },
+  "items": {
+    "rice": {
+      "id": "rice",
+      "label": "Rice",
+      "aliases": [
+        "rice"
+      ],
+      "caption": "Steamed rice",
+      "image": "rice.jpg"
+    },
+    "tea_cup": {
+      "id": "tea_cup",
+      "label": "Tea cup",
+      "aliases": [
+        "tea cup",
+        "cup",
+        "tea",
+        "chai"
+      ],
+      "caption": "A cup of tea",
+      "image": "tea_cup.jpg"
+    },
+    "bicycle": {
+      "id": "bicycle",
+      "label": "Bicycle",
+      "aliases": [
+        "bicycle",
+        "cycle",
+        "bike"
+      ],
+      "caption": "A bicycle",
+      "image": "bicycle.jpg"
+    },
+    "book": {
+      "id": "book",
+      "label": "Book",
+      "aliases": [
+        "book"
+      ],
+      "caption": "A book",
+      "image": "book.jpg"
+    },
+    "home": {
+      "id": "home",
+      "label": "Home",
+      "aliases": [
+        "home",
+        "house"
+      ],
+      "caption": "Home in Manipur",
+      "image": "home.jpg"
+    },
+    "morning": {
+      "id": "morning",
+      "label": "Morning",
+      "aliases": [
+        "morning"
+      ],
+      "caption": "Morning in Imphal",
+      "image": "morning.jpg"
+    },
+    "evening": {
+      "id": "evening",
+      "label": "Evening",
+      "aliases": [
+        "evening"
+      ],
+      "caption": "Evening by Loktak",
+      "image": "evening.jpg"
+    },
+    "sangai": {
+      "id": "sangai",
+      "label": "Sangai",
+      "aliases": [
+        "sangai",
+        "deer",
+        "brow antlered"
+      ],
+      "caption": "Sangai — Manipur’s dancing deer",
+      "image": "sangai.jpg"
+    },
+    "eromba": {
+      "id": "eromba",
+      "label": "Eromba",
+      "aliases": [
+        "eromba",
+        "mashed vegetables",
+        "manipuri dish"
+      ],
+      "caption": "Manipuri mashed vegetables with fish",
+      "image": "eromba.jpg"
+    },
+    "loktak": {
+      "id": "loktak",
+      "label": "Loktak",
+      "aliases": [
+        "loktak",
+        "loktak lake",
+        "floating lake",
+        "lake"
+      ],
+      "caption": "Loktak Lake — floating phumdis",
+      "image": "loktak.jpg"
+    },
+    "yaoshang": {
+      "id": "yaoshang",
+      "label": "Yaoshang",
+      "aliases": [
+        "yaoshang",
+        "holi",
+        "manipur festival"
+      ],
+      "caption": "Manipur’s spring festival",
+      "image": "yaoshang.jpg"
+    },
+    "phanek": {
+      "id": "phanek",
+      "label": "Phanek",
+      "aliases": [
+        "phanek",
+        "manipuri wrap",
+        "sarong"
+      ],
+      "caption": "Traditional Manipuri phanek",
+      "image": "phanek.jpg"
+    },
+    "innaphi": {
+      "id": "innaphi",
+      "label": "Innaphi",
+      "aliases": [
+        "innaphi",
+        "shawl",
+        "manipuri shawl"
+      ],
+      "caption": "Manipuri innaphi shawl",
+      "image": "innaphi.jpg"
+    }
+  },
+  "distractHometowns": [
+    "Guwahati",
+    "Shillong",
+    "Kohima",
+    "Aizawl",
+    "Agartala"
+  ]
+}

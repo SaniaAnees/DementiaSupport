@@ -55,11 +55,19 @@ const API = {
 
   // Sessions
   startSession(patientId, sessionType) { return this.post('/api/sessions', { patientId, sessionType }); },
-  completeSession(id, responses) { return this.post(`/api/sessions/${id}/complete`, { responses }); },
+  completeSession(id, responses, domains) {
+    return this.post(`/api/sessions/${id}/complete`, { responses, domains });
+  },
+  getPatientSessions(patientId, days = 90) {
+    return this.get(`/api/sessions?patientId=${encodeURIComponent(patientId)}&days=${days}`);
+  },
 
   // Sync
   sync(items) { return this.post('/api/sync', { items }); },
 
   // Analytics
   getAnalytics(patientId, days = 30) { return this.get(`/api/analytics/${patientId}?days=${days}`); },
+
+  speechStatus() { return this.get('/api/speech/status'); },
+  speechStt(payload) { return this.post('/api/speech/stt', payload); },
 };

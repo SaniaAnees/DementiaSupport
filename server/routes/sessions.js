@@ -1,7 +1,7 @@
 const express = require('express');
 const db = require('../db');
 const { authMiddleware } = require('../middleware/auth');
-const { shuffle, chips, expected, variedPrompt, computeSessionScores } = require('../utils/scoring');
+const { shuffle, chips, expected, variedPrompt, computeSessionScores, domainScoresFromResponses } = require('../utils/scoring');
 const { buildCurriculumSession } = require('../curriculum/builder');
 
 const router = express.Router();
@@ -179,23 +179,49 @@ router.post('/:id/complete', async (req, res) => {
       }))
     );
 
-    // Update session
+    const domains =
+      (req.body.domains && typeof req.body.domains === 'object' ? req.body.domains : null) ||
+      domainScoresFromResponses(responses);
+    scores.domains = domains;
+
+    // Update session (domains JSON for skill meters on caregiver dashboard)
     const sessionResult = await db.query(
-      `UPDATE sessions SET status='completed', ended_at=now(), accuracy=$1, avg_response_ms=$2, hints_used=$3, repetitions=$4, composite_score=$5, hint_rate=$6
-       WHERE id=$7 RETURNING *`,
-      [scores.accuracy, scores.avgResponseMs, scores.hintsUsed, scores.repetitions, scores.compositeScore, scores.hintRate, req.params.id]
+      `UPDATE sessions SET status='completed', ended_at=now(), accuracy=$1, avg_response_ms=$2, hints_used=$3, repetitions=$4, composite_score=$5, hint_rate=$6, domains=$7::jsonb
+       WHERE id=$8 RETURNING *`,
+      [
+        scores.accuracy,
+        scores.avgResponseMs,
+        scores.hintsUsed,
+        scores.repetitions,
+        scores.compositeScore,
+        scores.hintRate,
+        JSON.stringify(domains || {}),
+        req.params.id,
+      ]
     );
 
     if (!sessionResult.rows[0]) {
       return res.status(404).json({ error: 'Session not found' });
     }
 
-    // Insert responses
+    // Insert responses (include domain for rebuild / analytics)
     for (const r of responses) {
       await db.query(
-        `INSERT INTO responses (session_id, item_type, memory_id, prompt_text, expected_answers, transcript, is_correct, response_ms, hints_used, match_score)
-         VALUES ($1,$2,$3,$4,$5::jsonb,$6,$7,$8,$9,$10)`,
-        [req.params.id, r.itemType, r.memoryId, r.promptText, JSON.stringify(r.expectedAnswers || []), r.transcript, r.isCorrect, r.responseMs, r.hintsUsed, r.matchScore]
+        `INSERT INTO responses (session_id, item_type, memory_id, prompt_text, expected_answers, transcript, is_correct, response_ms, hints_used, match_score, domain)
+         VALUES ($1,$2,$3,$4,$5::jsonb,$6,$7,$8,$9,$10,$11)`,
+        [
+          req.params.id,
+          r.itemType,
+          r.memoryId,
+          r.promptText,
+          JSON.stringify(r.expectedAnswers || []),
+          r.transcript,
+          r.isCorrect,
+          r.responseMs,
+          r.hintsUsed,
+          r.matchScore,
+          r.domain || null,
+        ]
       );
     }
 
@@ -230,6 +256,28 @@ async function checkAndCreateAlert(patientId) {
     );
   }
 }
+
+// GET /api/sessions?patientId=&days= — list sessions for caregiver dashboard (real DB only)
+router.get('/', async (req, res) => {
+  try {
+    const patientId = req.query.patientId;
+    if (!patientId) return res.status(400).json({ error: 'patientId required' });
+    const patient = await verifyPatient(patientId, req.caregiverId);
+    if (!patient) return res.status(404).json({ error: 'Patient not found' });
+
+    const days = Math.min(365, Math.max(1, parseInt(req.query.days, 10) || 90));
+    const cutoffIso = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString();
+    const result = await db.query(
+      `SELECT * FROM sessions WHERE patient_id = $1 AND started_at > $2
+       ORDER BY started_at DESC`,
+      [patientId, cutoffIso]
+    );
+    res.json({ sessions: result.rows });
+  } catch (err) {
+    console.error('List sessions error:', err);
+    res.status(500).json({ error: 'Failed to list sessions' });
+  }
+});
 
 // GET /api/sessions/:id — get session with responses
 router.get('/:id', async (req, res) => {

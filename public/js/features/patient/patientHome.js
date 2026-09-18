@@ -1,10 +1,13 @@
 /**
- * Patient home — greeting + morning/evening buttons (tap) + optional voice.
- * Some patients use buttons; others can speak “start morning / evening”.
+ * Patient home — greeting + Morning/Evening CTAs + always-on voice.
+ * Buttons stay visible for judges / caregivers; patients can also speak
+ * in any NER / Hindi / English pack to start a session.
  */
 const PatientHome = {
   patientId: null,
   patient: null,
+  _starting: false,
+  _armed: false,
 
   async render(patientId) {
     this.patientId = patientId || window.app?.currentPatient?.id || null;
@@ -12,6 +15,12 @@ const PatientHome = {
     if (!content) return;
 
     this.teardown();
+    this._starting = false;
+    this._armed = false;
+    document.getElementById('main-app')?.classList.remove('is-session-active');
+    try {
+      SessionPlay?.leaveSessionChrome?.();
+    } catch (_) {}
 
     content.innerHTML = `
       <div class="ph-home">
@@ -26,14 +35,26 @@ const PatientHome = {
       this.patientId = patient?.id || this.patientId;
       if (patient && window.app) window.app.currentPatient = patient;
 
-      const lang = patient?.language_code || patient?.languageCode || 'en-IN';
-      const L = typeof PatientLocales !== 'undefined' ? PatientLocales.forLang(lang) : null;
+      const patientLang = patient?.language_code || patient?.languageCode || 'en-IN';
+      // Home voice UI: Hindi for Assam / Hindi patients (not bare English)
+      const speakLang = this.homeSpeakLang(patientLang, patient);
+      if (window.app) {
+        window.app.sessionSpeakLang = speakLang;
+        if (String(speakLang).toLowerCase().startsWith('hi')) {
+          window.app.sessionSpeakLangLocked = 'hi-IN';
+        }
+      }
+      const L =
+        typeof PatientLocales !== 'undefined' ? PatientLocales.forLang(speakLang) : null;
       const name = await this.resolveName(patient);
       const progress = await this.getTodayProgress(this.patientId);
       const copy = this.buildDailyCopy(name, L);
-      const micHint = L?.sayAnything
-        ? `${L.sayAnything} — “start morning”`
-        : 'Or say “start morning”';
+      const listenHint = L?.listening || 'Listening… say morning or evening';
+      this._helloNudged = false;
+
+      if (typeof VoiceLayer !== 'undefined') {
+        VoiceLayer.warmMic().catch(() => {});
+      }
 
       content.innerHTML = `
         <div class="ph-home">
@@ -42,15 +63,15 @@ const PatientHome = {
             <p class="ph-nudge">${this.escape(copy.nudge)}</p>
           </header>
 
-          <div class="ph-actions">
-            <button type="button" class="ph-session" id="ph-morning-btn" data-type="morning">
+          <div class="ph-actions" role="group" aria-label="Sessions">
+            <button type="button" class="ph-session" id="ph-btn-morning" data-slot="morning">
               <span class="ph-session-copy">
                 <span class="ph-session-title">Morning session</span>
                 <span class="ph-session-sub">Orientation, memory, and family story</span>
               </span>
               <span class="ph-session-go" aria-hidden="true">→</span>
             </button>
-            <button type="button" class="ph-session" id="ph-evening-btn" data-type="evening">
+            <button type="button" class="ph-session" id="ph-btn-evening" data-slot="evening">
               <span class="ph-session-copy">
                 <span class="ph-session-title">Evening session</span>
                 <span class="ph-session-sub">Recall the day, then family story</span>
@@ -60,9 +81,13 @@ const PatientHome = {
           </div>
 
           <p class="ph-status" aria-label="Today's progress">
-            <span>Morning <em class="${progress.morning ? 'is-done' : ''}">${progress.morning ? 'done' : 'ready'}</em></span>
+            <span>Morning <em class="${progress.morning ? 'is-done' : ''}">${
+              progress.morning ? 'done' : 'ready'
+            }</em></span>
             <span class="ph-status-dot" aria-hidden="true">·</span>
-            <span>Evening <em class="${progress.evening ? 'is-done' : ''}">${progress.evening ? 'done' : 'ready'}</em></span>
+            <span>Evening <em class="${progress.evening ? 'is-done' : ''}">${
+              progress.evening ? 'done' : 'ready'
+            }</em></span>
             ${
               progress.streak > 0
                 ? `<span class="ph-status-dot" aria-hidden="true">·</span><span class="ph-streak">${progress.streak}-day streak</span>`
@@ -70,68 +95,206 @@ const PatientHome = {
             }
           </p>
 
-          <button type="button" class="ph-mic-btn" id="ph-mic-btn" aria-label="Speak to start">
+          <div class="ph-mic-btn ph-mic-status" id="ph-mic-btn" aria-live="polite" aria-label="Voice status">
             <span class="ph-mic-ring" aria-hidden="true"></span>
-            <span class="ph-mic-label" id="ph-mic-label">${this.escape(micHint)}</span>
-          </button>
+            <span class="ph-mic-label" id="ph-mic-label">Greeting…</span>
+          </div>
         </div>
       `;
 
-      document.getElementById('ph-morning-btn')?.addEventListener('click', () => {
-        if (!this.patientId) return;
+      document.getElementById('ph-btn-morning')?.addEventListener('click', () => {
         this.beginSession('morning');
       });
-      document.getElementById('ph-evening-btn')?.addEventListener('click', () => {
-        if (!this.patientId) return;
+      document.getElementById('ph-btn-evening')?.addEventListener('click', () => {
         this.beginSession('evening');
       });
-      document.getElementById('ph-mic-btn')?.addEventListener('click', () => {
-        this.onMicTap();
-      });
-
-      try {
-        const line = `${copy.headline}. ${copy.nudge}`;
-        if (typeof VoiceLayer !== 'undefined') {
-          VoiceLayer.speak(line, { lang });
-        } else if (typeof Voice !== 'undefined') {
-          Voice.speak(line);
+      const armMic = () => {
+        if (this._armed || this._starting) return;
+        this._armed = true;
+        if (!this.patientId) {
+          const label = document.getElementById('ph-mic-label');
+          if (label) label.textContent = 'Ask caregiver to finish setup first';
+          return;
         }
-      } catch (_) {}
+        const label = document.getElementById('ph-mic-label');
+        if (label) label.textContent = listenHint;
+        this.startAlwaysListening(speakLang, L, progress);
+      };
+
+      // Always-on mic: open listen channel immediately (call-app style)
+      this._greetQuietUntil = Date.now() + 4500;
+      if (typeof VoiceLayer !== 'undefined') {
+        VoiceLayer.warmMic()
+          .catch(() => {})
+          .finally(() => armMic());
+
+        const spoken = `${copy.headline}. ${L?.voiceNudge || copy.nudge}`;
+        const label = document.getElementById('ph-mic-label');
+        if (label) label.textContent = listenHint;
+        VoiceLayer.speak(spoken, {
+          lang: speakLang,
+          rate: 0.9,
+          preserveListen: true,
+        });
+      } else {
+        const label = document.getElementById('ph-mic-label');
+        if (label) label.textContent = 'Tap a session to begin';
+      }
     } catch (err) {
       console.error('PatientHome.render failed:', err);
       content.innerHTML = `
         <div class="ph-home">
           <header class="ph-hello">
             <p class="ph-greeting">Welcome</p>
-            <p class="ph-nudge">Let’s get started.</p>
+            <p class="ph-nudge">Ask your caregiver to finish setup.</p>
           </header>
-          <div class="ph-actions">
-            <button type="button" class="ph-session" id="ph-morning-btn">
-              <span class="ph-session-copy">
-                <span class="ph-session-title">Morning session</span>
-                <span class="ph-session-sub">Tap to begin</span>
-              </span>
-              <span class="ph-session-go" aria-hidden="true">→</span>
-            </button>
-            <button type="button" class="ph-session" id="ph-evening-btn">
-              <span class="ph-session-copy">
-                <span class="ph-session-title">Evening session</span>
-                <span class="ph-session-sub">Tap to begin</span>
-              </span>
-              <span class="ph-session-go" aria-hidden="true">→</span>
-            </button>
-          </div>
         </div>`;
-      document.getElementById('ph-morning-btn')?.addEventListener('click', () => {
-        if (this.patientId) this.beginSession('morning');
-      });
-      document.getElementById('ph-evening-btn')?.addEventListener('click', () => {
-        if (this.patientId) this.beginSession('evening');
-      });
     }
   },
 
+  startAlwaysListening(lang, L, progress) {
+    if (typeof VoiceLayer === 'undefined' || this._starting) return;
+    const label = document.getElementById('ph-mic-label');
+    const micBtn = document.getElementById('ph-mic-btn');
+
+    if (label) label.textContent = L?.listening || 'Listening… say “morning” or “evening”';
+    micBtn?.classList.add('is-listening');
+    micBtn?.classList.remove('is-denied');
+
+    /** Hard rules: explicit morning/evening beats vague "start session" / time-of-day */
+    const pickSlot = (transcript, result) => {
+      const candidates = [transcript, ...(result?.alternatives || [])]
+        .map((c) => String(c || '').trim())
+        .filter(Boolean);
+      for (const c of candidates) {
+        const low = c.toLowerCase();
+        if (
+          /^(hello|hi+|hey|namaste|namaskar)[\s!,.]*$/i.test(low) ||
+          (/^good (morning|evening|afternoon)\b/.test(low) &&
+            !/\b(session|shuru|start|begin|karo|subah|shaam)\b/.test(low))
+        ) {
+          continue;
+        }
+        const intent = VoiceLayer.matchIntentAnyLanguage(c);
+        if (intent === 'start_evening') return 'evening';
+        if (intent === 'start_morning') return 'morning';
+        if (/\b(evening|shaam|sham|शाम|gadholi|sondhya|night)\b/.test(low)) return 'evening';
+        if (/\b(morning|subah|सुबह|sopuah|sokal)\b/.test(low)) return 'morning';
+        if (intent === 'start_generic' || intent === 'yes') {
+          return this.resolveSlotFromIntent(intent, progress);
+        }
+      }
+      return null;
+    };
+
+    const onHeard = async (transcript, result) => {
+      if (!transcript || this._starting) return false;
+      if (Date.now() < (this._greetQuietUntil || 0)) return false;
+      if (VoiceLayer.isLikelyEcho?.(transcript)) return false;
+
+      if (typeof SessionI18n !== 'undefined') {
+        for (const c of [transcript, ...(result?.alternatives || [])]) {
+          const detected = SessionI18n.detectFromSpeech?.(c);
+          if (detected && !String(detected).startsWith('as')) SessionI18n.lockLang(detected);
+        }
+      }
+
+      if (label) label.textContent = `Heard “${String(transcript).slice(0, 40)}”`;
+      const slot = pickSlot(transcript, result);
+      if (!slot) {
+        if (label) label.textContent = L?.listening || 'Listening… say morning or evening';
+        return false;
+      }
+
+      if (label) {
+        label.textContent =
+          slot === 'morning' ? 'Starting morning…' : 'Starting evening…';
+      }
+      micBtn?.classList.remove('is-listening', 'is-hearing');
+      this.beginSession(slot);
+      return true;
+    };
+
+    const openWebSpeech = () => {
+      if (label) label.textContent = L?.listening || 'Listening… say “morning” or “evening”';
+      VoiceLayer.startCallChannel({
+        lang,
+        onStatus: (s) => {
+          micBtn?.classList.toggle('is-listening', s === 'listening' || s === 'hearing');
+          micBtn?.classList.toggle('is-hearing', s === 'hearing');
+          if (!label) return;
+          if (s === 'denied') {
+            micBtn?.classList.add('is-denied');
+            label.textContent = 'Mic blocked — allow microphone, then refresh';
+          } else if (s === 'unavailable') {
+            label.textContent = 'Voice unavailable — tap Morning or Evening';
+          } else if (s === 'hearing') {
+            label.textContent = 'Hearing you…';
+          } else if (s === 'listening') {
+            label.textContent = L?.listening || 'Listening… say “morning” or “evening”';
+          }
+        },
+        onPartial: (live) => {
+          if (!label || this._starting) return;
+          const clip = String(live).trim().slice(0, 42);
+          if (clip) label.textContent = `Hearing: “${clip}”`;
+        },
+        onHeard,
+      });
+    };
+
+    // Native home voice: continuous Web Speech + big Morning/Evening buttons (chips).
+    openWebSpeech();
+  },
+
+  /** Mic tap — re-arm native listening (no cloud STT) */
+  async cloudPushToTalk(lang, L, progress) {
+    if (this._starting) return;
+    const label = document.getElementById('ph-mic-label');
+    if (label) label.textContent = L?.listening || 'Listening… say morning or evening';
+    this._armed = false;
+    this.startAlwaysListening(lang, L, progress);
+  },
+
+  /** Home / session speak lang — Assam / default demos use Hindi greetings */
+  homeSpeakLang(patientLang, patient) {
+    const code = String(patientLang || patient?.language_code || patient?.languageCode || '').toLowerCase();
+    const region = `${patient?.region_state || patient?.regionState || ''} ${
+      patient?.hometown || ''
+    }`.toLowerCase();
+    const assam =
+      code.startsWith('as') ||
+      /assam|guwahati|dispur|jorhat|dibrugarh|tezpur|silchar|as-in/.test(region);
+
+    if (code.startsWith('bn')) return 'bn-IN';
+    if (code.startsWith('hi') || code.startsWith('as') || assam) return 'hi-IN';
+    // MindCare NER default: Hindi voice (not bare English Good morning)
+    if (!code || code.startsWith('en')) return 'hi-IN';
+    const pack =
+      typeof VoicePhrases !== 'undefined' ? VoicePhrases.resolvePack?.(code) : 'en';
+    if (pack === 'bn') return 'bn-IN';
+    return 'hi-IN';
+  },
+
+  resolveSlotFromIntent(intent, progress) {
+    const hour = new Date().getHours();
+    const p = progress || {};
+
+    // Explicit slot — never swap evening↔morning
+    if (intent === 'start_morning') return 'morning';
+    if (intent === 'start_evening') return 'evening';
+
+    if (intent === 'start_generic' || intent === 'yes') {
+      if (hour < 15 && !p.morning) return 'morning';
+      if (!p.evening) return 'evening';
+      if (!p.morning) return 'morning';
+      return hour < 15 ? 'morning' : 'evening';
+    }
+    return null;
+  },
+
   teardown() {
+    this._armed = false;
     if (typeof VoiceLayer !== 'undefined') VoiceLayer.stop();
   },
 
@@ -140,21 +303,22 @@ const PatientHome = {
     const hour = now.getHours();
     const day = now.getDay();
 
-    const tod =
-      L
-        ? hour < 12
-          ? L.todMorning
-          : hour < 17
-            ? L.todAfternoon
-            : L.todEvening
-        : hour < 12
-          ? 'Good morning'
-          : hour < 17
-            ? 'Good afternoon'
-            : 'Good evening';
+    const tod = L
+      ? hour < 12
+        ? L.todMorning
+        : hour < 17
+          ? L.todAfternoon
+          : L.todEvening
+      : hour < 12
+        ? 'Good morning'
+        : hour < 17
+          ? 'Good afternoon'
+          : 'Good evening';
 
     const headline = L?.greeting?.(name, tod) || `${tod}, ${name}`;
-
+    if (L?.voiceNudge) {
+      return { headline, nudge: L.voiceNudge };
+    }
     const nudges = [
       'Let’s ease into the day.',
       'Let’s get you ready.',
@@ -165,19 +329,27 @@ const PatientHome = {
       'Let’s make today gentle.',
     ];
 
-    return {
-      headline,
-      nudge: nudges[day] || 'Let’s get started.',
-    };
+    return { headline, nudge: nudges[day] || 'Let’s get started.' };
   },
 
   beginSession(sessionType) {
     if (!this.patientId || !sessionType) return;
     if (this._starting) return;
     this._starting = true;
+    this._armed = false;
     this.teardown();
+    document.getElementById('main-app')?.classList.add('is-session-active');
 
-    const lang = this.patient?.language_code || this.patient?.languageCode || 'en-IN';
+    const lang = this.homeSpeakLang(
+      this.patient?.language_code || this.patient?.languageCode,
+      this.patient
+    );
+    if (window.app) {
+      window.app.sessionSpeakLang = lang;
+      if (String(lang).toLowerCase().startsWith('hi')) {
+        window.app.sessionSpeakLangLocked = 'hi-IN';
+      }
+    }
     const L = typeof PatientLocales !== 'undefined' ? PatientLocales.forLang(lang) : null;
     const msg =
       sessionType === 'morning'
@@ -188,67 +360,15 @@ const PatientHome = {
       this._starting = false;
       SessionStart.startSession(this.patientId, sessionType);
     };
+    this._pendingSessionType = sessionType;
 
     if (typeof VoiceLayer !== 'undefined') {
       VoiceLayer.speak(msg, { lang, onEnd: go });
       window.setTimeout(() => {
         if (this._starting) go();
-      }, 4000);
+      }, 4500);
     } else {
       go();
-    }
-  },
-
-  async onMicTap() {
-    const label = document.getElementById('ph-mic-label');
-    const btn = document.getElementById('ph-mic-btn');
-    if (!this.patientId) {
-      if (label) label.textContent = 'Add a patient in Caregiver first';
-      return;
-    }
-
-    if (typeof VoiceLayer === 'undefined') {
-      if (label) label.textContent = 'Tap Morning or Evening to begin';
-      return;
-    }
-
-    const lang = this.patient?.language_code || this.patient?.languageCode || 'en-IN';
-    const L = typeof PatientLocales !== 'undefined' ? PatientLocales.forLang(lang) : null;
-
-    btn?.classList.add('is-listening');
-    if (label) label.textContent = L?.listening || 'Listening…';
-
-    try {
-      const result = await VoiceLayer.listenOnce({ lang, timeoutMs: 6000 });
-      btn?.classList.remove('is-listening');
-
-      if (!result?.transcript) {
-        if (label) label.textContent = 'Didn’t catch that — tap a session';
-        VoiceLayer.speak(L?.sayAnything || 'Please tap morning or evening.', { lang });
-        return;
-      }
-
-      const intent = VoiceLayer.matchIntent(result.transcript, lang);
-      if (intent === 'start_morning' || (intent === 'start_generic' && new Date().getHours() < 15)) {
-        if (label) label.textContent = L?.startingMorning || 'Starting morning…';
-        this.beginSession('morning');
-        return;
-      }
-      if (intent === 'start_evening' || intent === 'start_generic') {
-        if (label) label.textContent = L?.startingEvening || 'Starting evening…';
-        this.beginSession('evening');
-        return;
-      }
-      if (intent === 'repeat') {
-        this.render(this.patientId);
-        return;
-      }
-
-      if (label) label.textContent = 'Try “start morning” or tap above';
-      VoiceLayer.speak('Please say start morning, or tap the button.', { lang });
-    } catch (_) {
-      btn?.classList.remove('is-listening');
-      if (label) label.textContent = 'Mic unavailable — tap a session';
     }
   },
 
@@ -301,12 +421,24 @@ const PatientHome = {
       patient?.preferredName ||
       (patient?.full_name || patient?.fullName || '').split(/\s+/).filter(Boolean)[0] ||
       '';
+    const title = (s) => {
+      const t = String(s || '').trim();
+      if (!t) return '';
+      return t.charAt(0).toUpperCase() + t.slice(1);
+    };
     if (fromPatient) {
-      await LocalDB.setMeta?.('patientPreferredName', fromPatient).catch(() => {});
-      return fromPatient;
+      const cleaned = title(fromPatient);
+      const bad = /^(anjali|anjani|friend|demo)$/i.test(cleaned);
+      if (!bad) {
+        await LocalDB.setMeta?.('patientPreferredName', cleaned).catch(() => {});
+        return cleaned;
+      }
     }
     const meta = await LocalDB.getMeta?.('patientPreferredName').catch(() => null);
-    return meta ? String(meta) : 'friend';
+    if (meta && !/^(anjali|anjani|friend|demo)$/i.test(String(meta))) {
+      return title(meta);
+    }
+    return title(fromPatient) || 'friend';
   },
 
   escape(s) {
@@ -318,15 +450,24 @@ const PatientHome = {
   },
 
   async getTodayProgress(patientId) {
-    const empty = { morning: false, evening: false, morningScore: null, eveningScore: null, streak: 0 };
+    const empty = {
+      morning: false,
+      evening: false,
+      morningScore: null,
+      eveningScore: null,
+      streak: 0,
+    };
     if (!patientId) return empty;
     let sessions = [];
     try {
       sessions =
-        (await LocalDB.getAllByIndex('sessions', 'patientId', patientId).catch(() => null)) ||
-        (await LocalDB.getAll('sessions').catch(() => [])) ||
-        [];
-      sessions = sessions.filter((s) => (s.patientId || s.patient_id) === patientId);
+        (await LocalDB.getAllByIndex('sessions', 'patientId', patientId).catch(() => [])) || [];
+      if (!sessions.length) {
+        const all = (await LocalDB.getAll('sessions').catch(() => [])) || [];
+        sessions = all.filter((s) => (s.patientId || s.patient_id) === patientId);
+      } else {
+        sessions = sessions.filter((s) => (s.patientId || s.patient_id) === patientId);
+      }
     } catch (_) {
       return empty;
     }

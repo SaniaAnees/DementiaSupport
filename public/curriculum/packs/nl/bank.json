@@ -1,0 +1,209 @@
+{
+  "state": "nl",
+  "name": "Nagaland",
+  "greeting": "Welcome",
+  "languageCodes": [
+    "en-IN"
+  ],
+  "imageBase": "/assets/curriculum/nl",
+  "weekdayNames": {
+    "en": [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday"
+    ],
+    "hi": [
+      "Ravivar",
+      "Somvar",
+      "Mangalvar",
+      "Budhvar",
+      "Guruvar",
+      "Shukravar",
+      "Shanivar"
+    ]
+  },
+  "weekdayAliases": {
+    "Sunday": [
+      "ravivar",
+      "robibar",
+      "रविवार"
+    ],
+    "Monday": [
+      "somvar",
+      "sombar",
+      "सोमवार"
+    ],
+    "Tuesday": [
+      "mangalvar",
+      "मंगलवार"
+    ],
+    "Wednesday": [
+      "budhvar",
+      "बुधवार"
+    ],
+    "Thursday": [
+      "guruvar",
+      "गुरुवार"
+    ],
+    "Friday": [
+      "shukravar",
+      "shukkar",
+      "शुक्रवार",
+      "friday"
+    ],
+    "Saturday": [
+      "shanivar",
+      "शनिवार"
+    ]
+  },
+  "items": {
+    "rice": {
+      "id": "rice",
+      "label": "Rice",
+      "aliases": [
+        "rice"
+      ],
+      "caption": "Steamed rice",
+      "image": "rice.jpg"
+    },
+    "tea_cup": {
+      "id": "tea_cup",
+      "label": "Tea cup",
+      "aliases": [
+        "tea cup",
+        "cup",
+        "tea",
+        "chai"
+      ],
+      "caption": "A cup of tea",
+      "image": "tea_cup.jpg"
+    },
+    "bicycle": {
+      "id": "bicycle",
+      "label": "Bicycle",
+      "aliases": [
+        "bicycle",
+        "cycle",
+        "bike"
+      ],
+      "caption": "A bicycle",
+      "image": "bicycle.jpg"
+    },
+    "book": {
+      "id": "book",
+      "label": "Book",
+      "aliases": [
+        "book"
+      ],
+      "caption": "A book",
+      "image": "book.jpg"
+    },
+    "home": {
+      "id": "home",
+      "label": "Home",
+      "aliases": [
+        "home",
+        "house"
+      ],
+      "caption": "Home in Nagaland",
+      "image": "home.jpg"
+    },
+    "morning": {
+      "id": "morning",
+      "label": "Morning",
+      "aliases": [
+        "morning"
+      ],
+      "caption": "Morning in the hills",
+      "image": "morning.jpg"
+    },
+    "evening": {
+      "id": "evening",
+      "label": "Evening",
+      "aliases": [
+        "evening"
+      ],
+      "caption": "Evening in Kohima",
+      "image": "evening.jpg"
+    },
+    "moatsu": {
+      "id": "moatsu",
+      "label": "Moatsu",
+      "aliases": [
+        "moatsu",
+        "ao festival"
+      ],
+      "caption": "Moatsu festival of the Ao",
+      "image": "moatsu.jpg"
+    },
+    "smoked_pork": {
+      "id": "smoked_pork",
+      "label": "Smoked pork",
+      "aliases": [
+        "smoked pork",
+        "pork",
+        "bamboo shoot pork",
+        "naga pork"
+      ],
+      "caption": "Naga smoked pork with bamboo shoot",
+      "image": "smoked_pork.jpg"
+    },
+    "dzukou": {
+      "id": "dzukou",
+      "label": "Dzukou",
+      "aliases": [
+        "dzukou",
+        "dzuko",
+        "valley",
+        "dzukou valley"
+      ],
+      "caption": "Dzukou Valley",
+      "image": "dzukou.jpg"
+    },
+    "hornbill": {
+      "id": "hornbill",
+      "label": "Hornbill",
+      "aliases": [
+        "hornbill",
+        "hornbill festival",
+        "festival"
+      ],
+      "caption": "Hornbill Festival of Nagaland",
+      "image": "hornbill.jpg"
+    },
+    "naga_shawl": {
+      "id": "naga_shawl",
+      "label": "Naga shawl",
+      "aliases": [
+        "naga shawl",
+        "shawl",
+        "tribal shawl"
+      ],
+      "caption": "Colourful Naga tribal shawl",
+      "image": "naga_shawl.jpg"
+    },
+    "tribal_beads": {
+      "id": "tribal_beads",
+      "label": "Naga beads",
+      "aliases": [
+        "naga beads",
+        "beads",
+        "necklace",
+        "tribal beads"
+      ],
+      "caption": "Traditional Naga bead necklace",
+      "image": "tribal_beads.jpg"
+    }
+  },
+  "distractHometowns": [
+    "Guwahati",
+    "Shillong",
+    "Imphal",
+    "Aizawl",
+    "Itanagar"
+  ]
+}

@@ -9,3 +9,7 @@ data/
 *.db-shm
 *.db-wal
 .commandcode/
+apps/flutter/.dart_tool/
+apps/flutter/build/
+*.onnx
+*.tar.bz2

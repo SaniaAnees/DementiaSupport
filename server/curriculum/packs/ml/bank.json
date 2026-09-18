@@ -1,0 +1,219 @@
+{
+  "state": "ml",
+  "name": "Meghalaya",
+  "greeting": "Khublei",
+  "languageCodes": [
+    "en-IN",
+    "kha"
+  ],
+  "imageBase": "/assets/curriculum/ml",
+  "weekdayNames": {
+    "en": [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday"
+    ],
+    "hi": [
+      "Ravivar",
+      "Somvar",
+      "Mangalvar",
+      "Budhvar",
+      "Guruvar",
+      "Shukravar",
+      "Shanivar"
+    ]
+  },
+  "weekdayAliases": {
+    "Sunday": [
+      "ravivar",
+      "robibar",
+      "रविवार"
+    ],
+    "Monday": [
+      "somvar",
+      "sombar",
+      "सोमवार"
+    ],
+    "Tuesday": [
+      "mangalvar",
+      "मंगलवार"
+    ],
+    "Wednesday": [
+      "budhvar",
+      "बुधवार"
+    ],
+    "Thursday": [
+      "guruvar",
+      "गुरुवार"
+    ],
+    "Friday": [
+      "shukravar",
+      "shukkar",
+      "शुक्रवार",
+      "friday"
+    ],
+    "Saturday": [
+      "shanivar",
+      "शनिवार"
+    ]
+  },
+  "items": {
+    "rice": {
+      "id": "rice",
+      "label": "Rice",
+      "aliases": [
+        "rice"
+      ],
+      "caption": "Steamed rice",
+      "image": "rice.jpg"
+    },
+    "tea_cup": {
+      "id": "tea_cup",
+      "label": "Tea cup",
+      "aliases": [
+        "tea cup",
+        "cup",
+        "tea",
+        "chai"
+      ],
+      "caption": "A cup of tea",
+      "image": "tea_cup.jpg"
+    },
+    "bicycle": {
+      "id": "bicycle",
+      "label": "Bicycle",
+      "aliases": [
+        "bicycle",
+        "cycle",
+        "bike"
+      ],
+      "caption": "A bicycle",
+      "image": "bicycle.jpg"
+    },
+    "book": {
+      "id": "book",
+      "label": "Book",
+      "aliases": [
+        "book"
+      ],
+      "caption": "A book",
+      "image": "book.jpg"
+    },
+    "home": {
+      "id": "home",
+      "label": "Home",
+      "aliases": [
+        "home",
+        "house"
+      ],
+      "caption": "Home in Meghalaya",
+      "image": "home.jpg"
+    },
+    "morning": {
+      "id": "morning",
+      "label": "Morning",
+      "aliases": [
+        "morning"
+      ],
+      "caption": "Morning in the hills",
+      "image": "morning.jpg"
+    },
+    "evening": {
+      "id": "evening",
+      "label": "Evening",
+      "aliases": [
+        "evening"
+      ],
+      "caption": "Evening in Shillong",
+      "image": "evening.jpg"
+    },
+    "shillong": {
+      "id": "shillong",
+      "label": "Shillong",
+      "aliases": [
+        "shillong",
+        "capital"
+      ],
+      "caption": "Capital of Meghalaya",
+      "image": "shillong.jpg"
+    },
+    "waterfall": {
+      "id": "waterfall",
+      "label": "Nohkalikai",
+      "aliases": [
+        "nohkalikai",
+        "waterfall",
+        "falls"
+      ],
+      "caption": "Nohkalikai Falls",
+      "image": "waterfall.jpg"
+    },
+    "jadoh": {
+      "id": "jadoh",
+      "label": "Jadoh",
+      "aliases": [
+        "jadoh",
+        "rice meat",
+        "khasi rice"
+      ],
+      "caption": "Khasi rice cooked with meat",
+      "image": "jadoh.jpg"
+    },
+    "living_root": {
+      "id": "living_root",
+      "label": "Living root bridge",
+      "aliases": [
+        "living root bridge",
+        "root bridge",
+        "jingkieng jri",
+        "bridge"
+      ],
+      "caption": "Living root bridges of Meghalaya",
+      "image": "living_root.jpg"
+    },
+    "wangala": {
+      "id": "wangala",
+      "label": "Wangala",
+      "aliases": [
+        "wangala",
+        "garo festival",
+        "100 drums"
+      ],
+      "caption": "Garo harvest festival",
+      "image": "wangala.jpg"
+    },
+    "jainsem": {
+      "id": "jainsem",
+      "label": "Jainsem",
+      "aliases": [
+        "jainsem",
+        "khasi dress",
+        "dress"
+      ],
+      "caption": "Traditional Khasi jainsem",
+      "image": "jainsem.jpg"
+    },
+    "ryndia": {
+      "id": "ryndia",
+      "label": "Ryndia",
+      "aliases": [
+        "ryndia",
+        "eri silk",
+        "silk"
+      ],
+      "caption": "Meghalaya eri silk cloth",
+      "image": "ryndia.jpg"
+    }
+  },
+  "distractHometowns": [
+    "Guwahati",
+    "Kohima",
+    "Imphal",
+    "Aizawl",
+    "Agartala"
+  ]
+}

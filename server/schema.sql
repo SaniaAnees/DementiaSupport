@@ -63,6 +63,7 @@ CREATE TABLE IF NOT EXISTS sessions (
   repetitions INTEGER DEFAULT 0,
   composite_score REAL,
   hint_rate REAL,
+  domains JSONB,
   created_at TIMESTAMPTZ DEFAULT now()
 );
 
@@ -79,6 +80,7 @@ CREATE TABLE IF NOT EXISTS responses (
   response_ms INTEGER,
   hints_used INTEGER DEFAULT 0,
   match_score REAL,
+  domain TEXT,
   created_at TIMESTAMPTZ DEFAULT now()
 );
 

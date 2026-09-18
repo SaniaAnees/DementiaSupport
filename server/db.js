@@ -72,6 +72,7 @@ CREATE TABLE IF NOT EXISTS sessions (
   repetitions INTEGER DEFAULT 0,
   composite_score REAL,
   hint_rate REAL,
+  domains TEXT,
   created_at TEXT DEFAULT ${SQLITE_NOW}
 );
 
@@ -87,6 +88,7 @@ CREATE TABLE IF NOT EXISTS responses (
   response_ms INTEGER,
   hints_used INTEGER DEFAULT 0,
   match_score REAL,
+  domain TEXT,
   created_at TEXT DEFAULT ${SQLITE_NOW}
 );
 
@@ -118,12 +120,22 @@ function ensureSqliteColumns() {
   if (!cols.includes('curriculum_started_at')) {
     sqliteDb.exec('ALTER TABLE patients ADD COLUMN curriculum_started_at TEXT');
   }
+  const sessionCols = sqliteDb.prepare('PRAGMA table_info(sessions)').all().map((c) => c.name);
+  if (!sessionCols.includes('domains')) {
+    sqliteDb.exec('ALTER TABLE sessions ADD COLUMN domains TEXT');
+  }
+  const responseCols = sqliteDb.prepare('PRAGMA table_info(responses)').all().map((c) => c.name);
+  if (!responseCols.includes('domain')) {
+    sqliteDb.exec('ALTER TABLE responses ADD COLUMN domain TEXT');
+  }
 }
 
 async function ensurePostgresColumns() {
   if (!pool) return;
   await pool.query('ALTER TABLE patients ADD COLUMN IF NOT EXISTS region_state TEXT');
   await pool.query('ALTER TABLE patients ADD COLUMN IF NOT EXISTS curriculum_started_at TIMESTAMPTZ');
+  await pool.query('ALTER TABLE sessions ADD COLUMN IF NOT EXISTS domains JSONB');
+  await pool.query('ALTER TABLE responses ADD COLUMN IF NOT EXISTS domain TEXT');
 }
 
 function initSQLite() {
