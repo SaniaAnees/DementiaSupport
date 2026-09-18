@@ -4,15 +4,13 @@ window.app = {
   currentView: 'auth',
   caregiver: null,
   currentPatient: null,
-  _booted: false,
 
   async init() {
     OTPAuth.bindUi?.();
     showScreen('splash-screen');
     const bootStarted = performance.now();
 
-    // Light boot only — register the service worker AFTER the welcome route so
-    // skipWaiting/claim cannot reload the tab mid-splash.
+    // Light boot first — register SW after route so it cannot reload mid-splash
     try {
       await LocalDB.openDB?.();
     } catch (err) {
@@ -23,15 +21,12 @@ window.app = {
     } catch (_) {}
     SyncManager.init?.();
 
-    // Welcome must stay on screen for a full beat AFTER boot finishes
+    // Welcome animation: ~2s on screen, measured after boot so slow loads don't eat it
     const elapsed = performance.now() - bootStarted;
-    const minWelcomeMs = 2400;
-    if (elapsed < minWelcomeMs) await this.wait(minWelcomeMs - elapsed);
+    const welcomeMs = 2000;
+    if (elapsed < welcomeMs) await this.wait(welcomeMs - elapsed);
 
-    this._booted = true;
     await this.continueAfterSplash();
-
-    // Offline support after first paint — never force a hard reload on activate
     this.registerServiceWorkerQuiet();
   },
 
@@ -41,8 +36,7 @@ window.app = {
       try {
         const reg = await navigator.serviceWorker.register('/sw.js');
         reg.update?.().catch(() => {});
-        // Intentionally no location.reload() on controllerchange — that was
-        // skipping the welcome splash and dumping users onto the intro collage.
+        // No forced location.reload() on controllerchange — that skipped the welcome.
       } catch (err) {
         console.warn('Service Worker registration failed:', err);
       }
@@ -72,40 +66,6 @@ window.app = {
     return new Promise((resolve) => window.setTimeout(resolve, ms));
   },
 
-  /** Logged-out users stay on the welcome splash until they tap (no auto-jump to intro). */
-  waitForWelcomeContinue() {
-    return new Promise((resolve) => {
-      const splash = document.getElementById('splash-screen');
-      if (!splash) {
-        resolve();
-        return;
-      }
-      splash.classList.add('is-ready');
-      splash.setAttribute('role', 'button');
-      splash.setAttribute('tabindex', '0');
-      splash.setAttribute('aria-label', 'Continue into MindCare');
-
-      const finish = () => {
-        splash.classList.remove('is-ready');
-        splash.removeAttribute('role');
-        splash.removeAttribute('tabindex');
-        splash.removeAttribute('aria-label');
-        splash.removeEventListener('click', onClick);
-        splash.removeEventListener('keydown', onKey);
-        resolve();
-      };
-      const onClick = () => finish();
-      const onKey = (e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          finish();
-        }
-      };
-      splash.addEventListener('click', onClick);
-      splash.addEventListener('keydown', onKey);
-    });
-  },
-
   async continueAfterSplash() {
     // Returning user with valid session
     if (Session.isValid()) {
@@ -118,8 +78,7 @@ window.app = {
       return;
     }
 
-    // First-time / logged out — keep welcome until tap, then collage intro → OTP
-    await this.waitForWelcomeContinue();
+    // First-time / logged out → collage intro → OTP
     await this.crossfadeToIntro();
   },
 
@@ -235,8 +194,7 @@ window.app = {
       auth?.classList.remove('is-visible', 'auth-exit');
     }
 
-    // Welcome step waits for Continue — no auto-skip to profiles
-    OnboardFlow.armWelcomeContinue?.();
+    OnboardFlow.armWelcomeTimer();
   },
 
   /**

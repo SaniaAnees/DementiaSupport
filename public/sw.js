@@ -1,5 +1,5 @@
 // Service Worker — offline-first, cache API responses
-const CACHE_NAME = 'mindcare-v79-welcome-hold';
+const CACHE_NAME = 'mindcare-v82-welcome-auto';
 const ASSETS = [
   '/',
   '/index.html',
