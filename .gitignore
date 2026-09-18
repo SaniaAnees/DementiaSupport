@@ -1,50 +1,11 @@
-# Dependencies & build
 node_modules/
-dist/
-dist-ssr/
-build/
-*.local
 .env
-.env.*
-!.env.example
-
-# Logs
-logs/
 *.log
-npm-debug.log*
-yarn-debug.log*
-pnpm-debug.log*
-
-# OS / editor
+uploads/
 .DS_Store
-Thumbs.db
-.idea/
-.vscode/*
-!.vscode/extensions.json
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
-
-# Android / Capacitor native build noise
-**/android/.gradle/
-**/android/app/build/
-**/android/build/
-**/android/local.properties
-**/android/.idea/
-**/android/captures/
-*.apk
-*.aab
-*.keystore
-!debug.keystore
-
-# Expo / Metro
-.expo/
-.expo-shared/
-web-build/
-
-# Misc
-coverage/
-*.tsbuildinfo
-.turbo/
+npm-debug.log*
+data/
+*.db
+*.db-shm
+*.db-wal
+.commandcode/

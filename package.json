@@ -1,0 +1,27 @@
+{
+  "name": "mindcare",
+  "version": "1.0.0",
+  "description": "AI-Based Cognitive Gaming and Memory Assistance Platform for Elderly Dementia Patients",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "node --watch server/index.js",
+    "db:setup": "node server/db/setup.js",
+    "test": "echo 'Tests not yet written' && exit 0"
+  },
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "better-sqlite3": "^13.0.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.0",
+    "jsonwebtoken": "^9.0.2",
+    "multer": "^1.4.5-lts.1",
+    "pg": "^8.13.0",
+    "sharp": "^0.35.4",
+    "twilio": "^5.3.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

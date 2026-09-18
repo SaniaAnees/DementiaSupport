@@ -1,0 +1,63 @@
+/* Shared homepage splash — exact artwork + smooth exit */
+.splash-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: #2a2926;
+  opacity: 1;
+  transition: opacity 0.85s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: splashWelcomeIn 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.splash-screen.splash-exit {
+  animation: none;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.splash-frame {
+  position: relative;
+  height: 100%;
+  width: min(100%, calc(100vh * 0.62));
+  max-width: 100%;
+  overflow: hidden;
+  background: #c8c2b4;
+  transition: transform 0.85s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.splash-screen.splash-exit .splash-frame {
+  transform: scale(1.04);
+}
+
+.splash-bg {
+  position: absolute;
+  inset: 0;
+  background-image: url('/images/splash-home.jpg');
+  background-position: center center;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+@keyframes splashWelcomeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@media (max-width: 480px) {
+  .splash-frame { width: 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .splash-screen {
+    animation: none;
+    opacity: 1;
+    transition: none;
+  }
+  .splash-screen.splash-exit .splash-frame {
+    transform: none;
+  }
+}

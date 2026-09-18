@@ -1,0 +1,140 @@
+{
+  "state": "as",
+  "name": "Assam",
+  "greeting": "Namaskar",
+  "languageCodes": ["as-IN", "en-IN"],
+  "imageBase": "/assets/curriculum/as",
+  "weekdayNames": {
+    "en": ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+    "as": ["Robibar", "Sombar", "Mongolbar", "Budhbar", "Brihospotibar", "Xukurbar", "Xonibar"]
+  },
+  "items": {
+    "pitha": {
+      "id": "pitha",
+      "label": "Pitha",
+      "aliases": ["pitha", "rice cake", "til pitha", "ghila pitha"],
+      "caption": "Assamese rice cake — often made for Bihu",
+      "image": "pitha.jpg"
+    },
+    "doi_chira": {
+      "id": "doi_chira",
+      "label": "Doi-chira",
+      "aliases": ["doi chira", "doi-chira", "jolpan", "chira", "curd and flattened rice"],
+      "caption": "Morning jolpan — curd with flattened rice",
+      "image": "doi_chira.jpg"
+    },
+    "masor_tenga": {
+      "id": "masor_tenga",
+      "label": "Masor tenga",
+      "aliases": ["masor tenga", "tenga", "sour fish", "fish curry"],
+      "caption": "Tangy Assamese fish curry",
+      "image": "masor_tenga.jpg"
+    },
+    "brahmaputra": {
+      "id": "brahmaputra",
+      "label": "Brahmaputra",
+      "aliases": ["brahmaputra", "the river", "big river", "luit"],
+      "caption": "The great river of Assam",
+      "image": "brahmaputra.jpg"
+    },
+    "tea_garden": {
+      "id": "tea_garden",
+      "label": "Tea garden",
+      "aliases": ["tea garden", "tea", "chai bagan", "tea estate"],
+      "caption": "Assam tea gardens",
+      "image": "tea_garden.jpg"
+    },
+    "kaziranga": {
+      "id": "kaziranga",
+      "label": "Kaziranga",
+      "aliases": ["kaziranga", "rhino", "one horned rhino"],
+      "caption": "Home of the one-horned rhinoceros",
+      "image": "kaziranga.jpg"
+    },
+    "bihu": {
+      "id": "bihu",
+      "label": "Bihu",
+      "aliases": ["bihu", "bohag bihu", "magh bihu", "rongali"],
+      "caption": "Assam’s harvest festival",
+      "image": "bihu.jpg"
+    },
+    "jaapi": {
+      "id": "jaapi",
+      "label": "Jaapi",
+      "aliases": ["jaapi", "japi", "bamboo hat", "hat"],
+      "caption": "Traditional Assamese bamboo hat",
+      "image": "jaapi.jpg"
+    },
+    "gamusa": {
+      "id": "gamusa",
+      "label": "Gamusa",
+      "aliases": ["gamusa", "gamosa", "towel", "scarf"],
+      "caption": "White-red Assamese gamusa",
+      "image": "gamusa.jpg"
+    },
+    "tea_cup": {
+      "id": "tea_cup",
+      "label": "Tea cup",
+      "aliases": ["tea cup", "cup", "chai", "tea"],
+      "caption": "A cup of Assam tea",
+      "image": "tea_cup.jpg"
+    },
+    "rice": {
+      "id": "rice",
+      "label": "Rice",
+      "aliases": ["rice", "bhat", "saul"],
+      "caption": "Steamed rice",
+      "image": "rice.jpg"
+    },
+    "fish": {
+      "id": "fish",
+      "label": "Fish",
+      "aliases": ["fish", "maas", "mas"],
+      "caption": "Fresh river fish",
+      "image": "fish.jpg"
+    },
+    "bicycle": {
+      "id": "bicycle",
+      "label": "Bicycle",
+      "aliases": ["bicycle", "cycle", "bike"],
+      "caption": "A bicycle — not food",
+      "image": "bicycle.jpg"
+    },
+    "book": {
+      "id": "book",
+      "label": "Book",
+      "aliases": ["book"],
+      "caption": "A book",
+      "image": "book.jpg"
+    },
+    "calendar": {
+      "id": "calendar",
+      "label": "Calendar",
+      "aliases": ["calendar", "date"],
+      "caption": "Today’s date",
+      "image": "calendar.jpg"
+    },
+    "home": {
+      "id": "home",
+      "label": "Home",
+      "aliases": ["home", "house"],
+      "caption": "Home in Assam",
+      "image": "home.jpg"
+    },
+    "morning": {
+      "id": "morning",
+      "label": "Morning",
+      "aliases": ["morning"],
+      "caption": "Morning in Assam",
+      "image": "morning.jpg"
+    },
+    "evening": {
+      "id": "evening",
+      "label": "Evening",
+      "aliases": ["evening"],
+      "caption": "Evening by the Brahmaputra",
+      "image": "evening.jpg"
+    }
+  },
+  "distractHometowns": ["Shillong", "Kohima", "Imphal", "Aizawl", "Agartala"]
+}

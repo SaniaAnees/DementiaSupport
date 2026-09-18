@@ -1,0 +1,359 @@
+/* Intro — cream mist like splash-home.jpg + quiet gold accents */
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Noto+Sans+Bengali:wght@400;500&family=Noto+Sans+Devanagari:wght@400;500&family=Noto+Sans:wght@400;500&display=swap');
+
+:root {
+  --intro-gold: #b8924a;
+  --intro-gold-soft: #c5a059;
+  --intro-gold-bright: #e2c87a;
+  --intro-ink: #2f4a38;
+  --intro-ink-soft: #3d5c48;
+  --intro-cream: #f4efe6;
+  --intro-mist: #e8e2d6;
+}
+
+.intro-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: #c8c2b4;
+  opacity: 0;
+  transition: opacity 0.85s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+}
+
+.intro-screen.is-visible {
+  opacity: 1;
+  pointer-events: auto;
+  z-index: 950;
+}
+
+.intro-screen.intro-exit {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.intro-frame {
+  position: relative;
+  height: 100%;
+  width: min(100%, calc(100vh * 0.62));
+  max-width: 100%;
+  overflow: hidden;
+  background: var(--intro-mist);
+  transform: scale(1.03);
+  transition: transform 0.95s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.intro-screen.is-visible .intro-frame {
+  transform: scale(1);
+}
+
+.intro-frame::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background:
+    radial-gradient(ellipse 95% 70% at 50% 12%, #f7f2e9 0%, transparent 55%),
+    linear-gradient(180deg, #ebe5d8 0%, #ddd6c8 100%);
+}
+
+.intro-collage {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1.05fr 1.05fr 1.05fr 1.15fr;
+  gap: 2px;
+  padding: 2px;
+}
+
+.intro-cell {
+  position: relative;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(14px);
+}
+
+.intro-screen.is-active .intro-cell {
+  animation: introCellIn 1.05s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.intro-screen.is-active .intro-cell:nth-child(1) { animation-delay: 0.12s; }
+.intro-screen.is-active .intro-cell:nth-child(2) { animation-delay: 0.22s; }
+.intro-screen.is-active .intro-cell:nth-child(3) { animation-delay: 0.32s; }
+.intro-screen.is-active .intro-cell:nth-child(4) { animation-delay: 0.42s; }
+.intro-screen.is-active .intro-cell:nth-child(5) { animation-delay: 0.52s; }
+.intro-screen.is-active .intro-cell:nth-child(6) { animation-delay: 0.62s; }
+.intro-screen.is-active .intro-cell:nth-child(7) { animation-delay: 0.72s; }
+
+.intro-cell:nth-child(7) {
+  grid-column: 1 / -1;
+}
+
+.intro-cell img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 18%;
+  display: block;
+  opacity: 0.7;
+  filter: saturate(0.9) contrast(0.97) brightness(1.06);
+}
+
+.intro-cell:nth-child(7) img {
+  object-position: center 28%;
+}
+
+@keyframes introCellIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Cream mist veil — splash-home warmth, not a black vignette */
+.intro-veil {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      ellipse 90% 58% at 50% 44%,
+      rgba(247, 242, 233, 0.9) 0%,
+      rgba(244, 239, 230, 0.68) 42%,
+      rgba(232, 226, 214, 0.32) 70%,
+      rgba(220, 214, 200, 0.16) 100%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(247, 242, 233, 0.45) 0%,
+      transparent 28%,
+      transparent 72%,
+      rgba(232, 226, 214, 0.4) 100%
+    );
+}
+
+.intro-content {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 10% 11%;
+  text-align: center;
+  gap: 0.8rem;
+  opacity: 0;
+  transform: translateY(18px);
+  transition:
+    opacity 0.75s cubic-bezier(0.22, 1, 0.36, 1) 0.15s,
+    transform 0.75s cubic-bezier(0.22, 1, 0.36, 1) 0.15s;
+}
+
+.intro-screen.is-visible .intro-content {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.intro-eyebrow {
+  margin: 0 0 0.25rem;
+  color: var(--intro-gold);
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: none;
+}
+
+.intro-rotate-wrap {
+  min-height: 4.8em;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.intro-rotate {
+  margin: 0;
+  max-width: 22rem;
+  color: var(--intro-ink-soft);
+  font-family: 'Noto Sans', 'Noto Sans Bengali', 'Noto Sans Devanagari', sans-serif;
+  font-size: clamp(1.05rem, 3.8vw, 1.28rem);
+  font-weight: 500;
+  line-height: 1.5;
+  letter-spacing: 0.01em;
+  text-wrap: balance;
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.intro-rotate.is-leaving {
+  opacity: 0;
+  transform: translateY(-8px);
+}
+
+.intro-rotate.is-entering {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.intro-english {
+  margin: 0.1rem 0 0.2rem;
+  max-width: 17.5rem;
+  color: var(--intro-ink);
+  font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+  font-size: clamp(1.55rem, 5.2vw, 2rem);
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: 0.01em;
+  text-wrap: balance;
+}
+
+.intro-english .ch {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(0.4em);
+  animation: introLetterIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.intro-english .ch.is-space {
+  width: 0.28em;
+}
+
+@keyframes introLetterIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/*
+  CTA — transparent fill, golden outline, rounded rect
+  (clearly a button, not floating text)
+*/
+.intro-cta {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  margin-top: 1.15rem;
+  padding: 0.85rem 1.55rem;
+  min-width: 14.5rem;
+  border: 1.5px solid var(--intro-gold-soft);
+  border-radius: 999px;
+  background: transparent;
+  box-shadow: none;
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(12px);
+  pointer-events: none;
+  transition:
+    opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+    background 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.intro-cta.is-ready {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.intro-cta-label {
+  color: var(--intro-ink);
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 1.28rem;
+  font-weight: 500;
+  font-style: italic;
+  letter-spacing: 0.02em;
+  line-height: 1;
+}
+
+.intro-cta-dots {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding-top: 2px;
+}
+
+.intro-cta-dots i {
+  display: block;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--intro-gold);
+  opacity: 0.35;
+  animation: introGoldDot 1.4s ease-in-out infinite;
+}
+
+.intro-cta-dots i:nth-child(1) { animation-delay: 0s; }
+.intro-cta-dots i:nth-child(2) { animation-delay: 0.2s; }
+.intro-cta-dots i:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes introGoldDot {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scale(0.85);
+    background: var(--intro-gold);
+    box-shadow: 0 0 0 0 rgba(197, 160, 89, 0);
+  }
+  45% {
+    opacity: 1;
+    transform: scale(1.15);
+    background: var(--intro-gold-bright);
+    box-shadow: 0 0 7px 1px rgba(226, 200, 122, 0.55);
+  }
+}
+
+.intro-cta:hover,
+.intro-cta:focus-visible {
+  background: rgba(197, 160, 89, 0.08);
+  border-color: var(--intro-gold);
+  outline: none;
+}
+
+.intro-cta:hover .intro-cta-label,
+.intro-cta:focus-visible .intro-cta-label {
+  color: var(--intro-gold);
+}
+
+.intro-cta:active {
+  transform: translateY(1px);
+}
+
+@media (max-width: 480px) {
+  .intro-frame { width: 100%; }
+  .intro-content { padding: 10% 9%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .intro-screen,
+  .intro-frame,
+  .intro-content,
+  .intro-cell,
+  .intro-english .ch,
+  .intro-rotate,
+  .intro-cta,
+  .intro-cta-dots i {
+    animation: none !important;
+    transition: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .intro-cta {
+    pointer-events: auto;
+  }
+
+  .intro-cta-dots i {
+    opacity: 0.8 !important;
+  }
+}

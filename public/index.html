@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#4a7c59">
+  <meta name="description" content="MindCare — Cognitive Gaming and Memory Assistance for Dementia Patients">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" href="/icons/icon-192.svg">
+  <title>MindCare</title>
+  <link rel="stylesheet" href="/css/tokens.css">
+  <link rel="stylesheet" href="/css/splash.css">
+  <link rel="stylesheet" href="/css/intro.css">
+  <link rel="stylesheet" href="/css/auth.css">
+  <link rel="stylesheet" href="/css/onboard.css">
+  <link rel="stylesheet" href="/css/caregiver.css">
+  <link rel="stylesheet" href="/css/patient.css">
+</head>
+<body>
+  <div id="app">
+    <!-- Shared splash homepage (new + returning users) -->
+    <div id="splash-screen" class="splash-screen screen" aria-label="MindCare">
+      <div class="splash-frame">
+        <div class="splash-bg" role="img" aria-label="MindCare — Memory Care That Matters"></div>
+      </div>
+    </div>
+
+    <!-- First-time intro (after splash) -->
+    <div id="intro-screen" class="intro-screen screen hidden" aria-label="Welcome to MindCare">
+      <div class="intro-frame">
+        <div class="intro-collage" aria-hidden="true">
+          <div class="intro-cell"><img src="/images/intro/p1.png" alt=""></div>
+          <div class="intro-cell"><img src="/images/intro/p2.png" alt=""></div>
+          <div class="intro-cell"><img src="/images/intro/p3.png" alt=""></div>
+          <div class="intro-cell"><img src="/images/intro/p4.png" alt=""></div>
+          <div class="intro-cell"><img src="/images/intro/p5.png" alt=""></div>
+          <div class="intro-cell"><img src="/images/intro/p7.png" alt=""></div>
+          <div class="intro-cell"><img src="/images/intro/p8.png" alt=""></div>
+        </div>
+        <div class="intro-veil" aria-hidden="true"></div>
+        <div class="intro-content">
+          <p class="intro-eyebrow">MindCare</p>
+          <div class="intro-rotate-wrap">
+            <p id="intro-rotate" class="intro-rotate" lang="as"></p>
+          </div>
+          <p id="intro-english" class="intro-english" lang="en"></p>
+          <button type="button" id="intro-cta" class="intro-cta" aria-label="Let’s get started">
+            <span class="intro-cta-label">Let’s get started</span>
+            <span class="intro-cta-dots" aria-hidden="true">
+              <i></i><i></i><i></i>
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Phone OTP (after Let's get started) — one page, splash aesthetic -->
+    <div id="auth-gate" class="auth-gate screen hidden" aria-label="Sign in to MindCare">
+      <div class="auth-frame">
+        <div class="auth-bg" role="img" aria-label="North East landscape"></div>
+        <div class="auth-veil" aria-hidden="true"></div>
+        <div class="auth-content">
+          <div class="auth-brand">
+            <img
+              class="auth-logo"
+              src="/images/mindcare-logo-mark.png"
+              alt="MindCare"
+              width="88"
+              height="88"
+            >
+            <p class="auth-name">MindCare</p>
+          </div>
+
+          <div id="otp-screen" class="auth-panel">
+            <p class="auth-eyebrow">Sign in</p>
+            <h2 id="auth-heading">Enter your phone number.</h2>
+            <p id="auth-sub" class="auth-sub">We’ll send a 6-digit code by SMS so only you can open this space.</p>
+
+            <div class="auth-row" id="auth-phone-step">
+              <div class="auth-phone-row">
+                <span class="auth-cc" aria-hidden="true">+91</span>
+                <label for="phone-input" class="hidden">Phone number</label>
+                <input
+                  type="tel"
+                  id="phone-input"
+                  placeholder="98765 43210"
+                  inputmode="numeric"
+                  autocomplete="tel-national"
+                  maxlength="10"
+                  pattern="[0-9]{10}"
+                >
+              </div>
+              <button type="button" id="send-otp-btn" class="auth-btn-primary">Send code</button>
+            </div>
+            <p id="otp-status" class="auth-status" role="status"></p>
+
+            <div id="auth-code-stage" class="auth-code-stage" hidden>
+              <p class="auth-code-label">
+                Enter the code sent to
+                <span class="auth-phone-num" id="verify-phone"></span>
+              </p>
+              <div class="auth-otp-boxes" id="otp-boxes" role="group" aria-label="6-digit code">
+                <input type="text" inputmode="numeric" maxlength="1" aria-label="Digit 1" autocomplete="one-time-code">
+                <input type="text" inputmode="numeric" maxlength="1" aria-label="Digit 2">
+                <input type="text" inputmode="numeric" maxlength="1" aria-label="Digit 3">
+                <input type="text" inputmode="numeric" maxlength="1" aria-label="Digit 4">
+                <input type="text" inputmode="numeric" maxlength="1" aria-label="Digit 5">
+                <input type="text" inputmode="numeric" maxlength="1" aria-label="Digit 6">
+              </div>
+              <input type="hidden" id="otp-input" value="">
+              <button type="button" id="verify-otp-btn" class="auth-btn-primary auth-btn-continue">Continue</button>
+              <p id="verify-status" class="auth-status" role="status"></p>
+
+              <div class="auth-help" id="auth-help">
+                <button type="button" id="sms-help-btn" class="auth-link">Didn’t get the SMS?</button>
+                <p id="sms-help-tip" class="auth-sms-tip">
+                  Check the number, wait a minute, then try Resend. Codes can take a little longer on some networks.
+                </p>
+                <button type="button" id="resend-otp-btn" class="auth-link" disabled>Resend in 0:30</button>
+                <button type="button" id="change-phone-btn" class="auth-link">Change number</button>
+              </div>
+            </div>
+
+            <div id="auth-verified-stage" class="auth-verified-stage" hidden>
+              <div class="auth-verified-spinner" aria-hidden="true"></div>
+              <p id="auth-verified-msg" class="auth-verified-msg">Checking…</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Kept for API compatibility; not shown in UI -->
+      <div id="otp-verify-screen" class="hidden" aria-hidden="true"></div>
+      <div id="pin-setup-screen" class="hidden" aria-hidden="true"></div>
+      <div id="pin-entry-screen" class="hidden" aria-hidden="true"></div>
+    </div>
+
+    <!-- First-time onboarding (after OTP) -->
+    <div id="onboard-gate" class="onboard-gate screen hidden" aria-label="Set up MindCare">
+      <div class="onboard-frame">
+        <div class="onboard-bg" role="img" aria-label="North East landscape"></div>
+        <div class="onboard-veil" aria-hidden="true"></div>
+        <div class="onboard-content">
+          <div class="onboard-brand">
+            <img class="onboard-logo" src="/images/mindcare-logo-mark.png" alt="" width="72" height="72">
+            <p class="onboard-name">MindCare</p>
+          </div>
+
+          <!-- Welcome (auto-advance) -->
+          <section id="onboard-welcome" class="onboard-step">
+            <p class="onboard-eyebrow">Welcome</p>
+            <h2 class="onboard-title">Let’s set up care.</h2>
+            <p class="onboard-copy">A few quiet steps so the people they love stay familiar.</p>
+          </section>
+
+          <!-- Caregiver + patient name -->
+          <section id="onboard-profiles" class="onboard-step hidden">
+            <p class="onboard-eyebrow">About you</p>
+            <h2 class="onboard-title">Who are you?</h2>
+            <div class="onboard-field">
+              <label for="ob-caregiver-name">Your name</label>
+              <input type="text" id="ob-caregiver-name" placeholder="e.g. Meera" autocomplete="name">
+            </div>
+            <div class="onboard-field">
+              <label for="ob-caregiver-role">Your role</label>
+              <input type="text" id="ob-caregiver-role" placeholder="e.g. Daughter, Caregiver, Neighbour…">
+            </div>
+
+            <div class="onboard-divider" aria-hidden="true"></div>
+
+            <p class="onboard-eyebrow">About them</p>
+            <h2 class="onboard-title">Who are we caring for?</h2>
+            <div class="onboard-field">
+              <label for="ob-patient-name">Their name</label>
+              <input type="text" id="ob-patient-name" placeholder="e.g. Anjali Devi">
+            </div>
+            <button type="button" id="ob-profiles-continue" class="onboard-btn">Continue</button>
+            <p id="ob-profiles-status" class="onboard-status" role="status"></p>
+          </section>
+
+          <!-- Language + place (for location / language games) -->
+          <section id="onboard-place" class="onboard-step hidden">
+            <p class="onboard-eyebrow">Language &amp; place</p>
+            <h2 class="onboard-title">How they speak, where they live.</h2>
+            <p class="onboard-copy">We’ll use this to tailor memory games to their language and home.</p>
+
+            <div class="onboard-field">
+              <label for="ob-patient-language">What language do they speak?</label>
+              <select id="ob-patient-language" class="onboard-select">
+                <option value="">Choose a language</option>
+                <option value="en-IN">English</option>
+                <option value="hi-IN">Hindi</option>
+                <option value="as-IN">Assamese</option>
+                <option value="bn-IN">Bengali</option>
+                <option value="mni-IN">Manipuri (Meitei)</option>
+                <option value="mz-IN">Mizo</option>
+                <option value="kha-IN">Khasi</option>
+                <option value="nag-IN">Nagamese</option>
+                <option value="brx-IN">Bodo</option>
+              </select>
+            </div>
+            <div class="onboard-field hidden" id="ob-language-other-wrap">
+              <label for="ob-patient-language-other">Which language?</label>
+              <input type="text" id="ob-patient-language-other" placeholder="e.g. Nagamese, Khasi, Mizo…">
+            </div>
+
+            <div class="onboard-field">
+              <label for="ob-patient-hometown">Where do they live?</label>
+              <input
+                type="text"
+                id="ob-patient-hometown"
+                placeholder="e.g. Imphal, Guwahati, Shillong…"
+                autocomplete="address-level2"
+              >
+            </div>
+            <p class="onboard-hint">Town, city, or region — used for place-based games later.</p>
+
+            <button type="button" id="ob-place-continue" class="onboard-btn">Continue</button>
+            <button type="button" id="ob-place-back" class="onboard-btn-ghost">Back</button>
+            <p id="ob-place-status" class="onboard-status" role="status"></p>
+          </section>
+
+          <!-- Family memories -->
+          <section id="onboard-family" class="onboard-step hidden">
+            <div id="ob-family-home">
+              <p class="onboard-eyebrow">Memories</p>
+              <h2 class="onboard-title">Faces they should still know.</h2>
+              <p class="onboard-copy">Add photos of people they love — so those faces stay close when memory fades.</p>
+              <button type="button" id="ob-add-face-btn" class="onboard-btn">Add a familiar face</button>
+              <div id="ob-family-list" class="ob-family-list"></div>
+              <button type="button" id="ob-family-done" class="onboard-btn-ghost hidden">Continue</button>
+            </div>
+
+            <div id="ob-family-pick" class="hidden">
+              <p class="onboard-eyebrow">Photo</p>
+              <h2 class="onboard-title">Choose a photo.</h2>
+              <p class="onboard-copy">Camera or gallery — either works.</p>
+              <div class="ob-pick-row">
+                <button type="button" id="ob-pick-camera" class="onboard-btn">Camera</button>
+                <button type="button" id="ob-pick-gallery" class="onboard-btn-ghost">Gallery</button>
+              </div>
+              <input type="file" id="ob-gallery-input" accept="image/*" class="hidden" aria-hidden="true">
+              <button type="button" id="ob-pick-back" class="auth-link">Back</button>
+            </div>
+
+            <div id="ob-family-camera" class="hidden">
+              <video id="ob-camera-video" playsinline autoplay muted></video>
+              <canvas id="ob-camera-canvas" class="hidden"></canvas>
+              <div class="ob-pick-row">
+                <button type="button" id="ob-camera-shutter" class="onboard-btn">Capture</button>
+                <button type="button" id="ob-camera-cancel" class="onboard-btn-ghost">Cancel</button>
+              </div>
+            </div>
+
+            <div id="ob-family-detail" class="hidden">
+              <img id="ob-face-preview" class="ob-face-preview" alt="Selected face">
+              <p id="ob-face-detect" class="onboard-status is-ok"></p>
+              <div class="ob-pick-row ob-photo-actions">
+                <button type="button" id="ob-face-retake" class="onboard-btn-ghost">Retake photo</button>
+                <button type="button" id="ob-face-gallery-again" class="auth-link">Choose another</button>
+              </div>
+              <p class="onboard-title" style="font-size:1.5rem">Who is this?</p>
+              <div class="onboard-field">
+                <label for="ob-face-relation">Who are they to your loved one?</label>
+                <input type="text" id="ob-face-relation" placeholder="e.g. Mom, Caregiver, Neighbour…">
+              </div>
+              <div class="onboard-field">
+                <label for="ob-face-name">Name they might say</label>
+                <input type="text" id="ob-face-name" placeholder="e.g. Meera">
+              </div>
+              <div class="onboard-field">
+                <label for="ob-face-hint">A familiar detail that helps recognition <span class="ob-optional">(optional)</span></label>
+                <input type="text" id="ob-face-hint" placeholder="e.g. brings flowers on Sundays">
+              </div>
+              <button type="button" id="ob-face-save" class="onboard-btn">Confirm &amp; add</button>
+              <button type="button" id="ob-face-cancel" class="onboard-btn-ghost">Cancel</button>
+              <p id="ob-face-status" class="onboard-status" role="status"></p>
+            </div>
+
+            <div id="ob-ready" class="hidden">
+              <p class="onboard-eyebrow">Done</p>
+              <h2 class="onboard-title">You’re all set up.</h2>
+              <p class="onboard-copy">Care is ready whenever you are.</p>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main App — portrait PWA shell -->
+    <div id="main-app" class="main-app screen hidden">
+      <div class="app-shell">
+        <!-- Quiet mode switch — text only, no bar -->
+        <div class="mode-switch" role="tablist" aria-label="App mode">
+          <button type="button" class="mode-link is-active" id="mode-patient-btn" data-mode="patient" role="tab" aria-selected="true">
+            Patient
+          </button>
+          <span class="mode-sep" aria-hidden="true">/</span>
+          <button type="button" class="mode-link" id="mode-caregiver-btn" data-mode="caregiver" role="tab" aria-selected="false">
+            Caregiver
+          </button>
+        </div>
+
+        <!-- Caregiver Dashboard -->
+        <div id="caregiver-view" class="view hidden">
+          <header class="app-header">
+            <h1>MindCare</h1>
+            <div class="header-actions">
+              <button id="sync-btn" class="btn btn-icon" title="Sync">↻</button>
+              <button id="logout-btn" class="btn btn-text" type="button">Log out</button>
+            </div>
+          </header>
+          <nav class="tab-nav">
+            <button class="tab-btn active" data-tab="home">Home</button>
+            <button class="tab-btn" data-tab="patients">Patients</button>
+            <button class="tab-btn" data-tab="analytics">Analytics</button>
+          </nav>
+          <main class="tab-content">
+            <div id="tab-home" class="tab-pane active">
+              <div id="patient-list" class="card-list"></div>
+              <button id="add-patient-btn" class="btn btn-primary btn-large">+ Add Patient</button>
+            </div>
+            <div id="tab-patients" class="tab-pane hidden">
+              <div id="patient-detail"></div>
+            </div>
+            <div id="tab-analytics" class="tab-pane hidden">
+              <div id="analytics-view"></div>
+            </div>
+          </main>
+        </div>
+
+        <!-- Patient Session View -->
+        <div id="patient-view" class="view hidden">
+          <div id="session-container"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="/js/db.js"></script>
+  <script src="/js/api.js"></script>
+  <script src="/js/sync.js"></script>
+  <script src="/js/auth/session.js"></script>
+  <script src="/js/auth/otp.js"></script>
+  <script src="/js/auth/pin.js"></script>
+  <script src="/js/engine/sessionBuilder.js"></script>
+  <script src="/js/engine/curriculumClient.js"></script>
+  <script src="/js/engine/grading.js"></script>
+  <script src="/js/engine/scoring.js"></script>
+  <script src="/js/voice/phrases.js"></script>
+  <script src="/js/voice/voiceLayer.js"></script>
+  <script src="/js/features/caregiver/home.js"></script>
+  <script src="/js/features/caregiver/patientEditor.js"></script>
+  <script src="/js/features/caregiver/analytics.js"></script>
+  <script src="/js/features/patient/patientHome.js"></script>
+  <script src="/js/features/patient/sessionStart.js"></script>
+  <script src="/js/features/patient/sessionPlay.js"></script>
+  <script src="/js/features/patient/sessionSummary.js"></script>
+  <script src="/js/features/intro.js"></script>
+  <script src="/js/features/onboard.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>

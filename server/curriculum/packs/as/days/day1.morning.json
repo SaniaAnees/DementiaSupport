@@ -1,0 +1,356 @@
+{
+  "day": 1,
+  "sessionType": "morning",
+  "theme": "Home & breakfast",
+  "title": "Morning at home",
+  "registrationIds": [
+    "pitha",
+    "brahmaputra",
+    "bihu"
+  ],
+  "steps": [
+    {
+      "id": "m1-orient-day",
+      "itemType": "orientation",
+      "domain": "orientation",
+      "promptText": "What day is it today?",
+      "spokenPrompt": "Good morning. What day is it today?",
+      "answerFrom": "weekday",
+      "chipPool": "weekdays",
+      "hintText": "Today is {{weekday}}.",
+      "media": {
+        "kind": "image",
+        "image": "calendar.jpg",
+        "caption": "Calendar"
+      }
+    },
+    {
+      "id": "m1-orient-place",
+      "itemType": "orientation",
+      "domain": "orientation",
+      "promptText": "Where are you from?",
+      "spokenPrompt": "Where are you from?",
+      "answerFrom": "hometown",
+      "chipPool": "hometownDistractors",
+      "hintText": "You are from {{hometown}}.",
+      "media": {
+        "kind": "image",
+        "image": "home.jpg",
+        "caption": "Home in Assam"
+      }
+    },
+    {
+      "id": "m1-orient-person",
+      "itemType": "orientation",
+      "domain": "orientation",
+      "promptText": "Who is this?",
+      "spokenPrompt": "Look at this photo. Who is this?",
+      "answerFrom": "family0",
+      "chipPool": "familyLabels",
+      "hintText": "This is {{family0.label}}.",
+      "media": {
+        "kind": "family",
+        "index": 0
+      }
+    },
+    {
+      "id": "m1-reg-intro",
+      "itemType": "story_beat",
+      "domain": "registration",
+      "promptText": "Let’s remember three Assam treasures.",
+      "spokenPrompt": "Namaskar. Let’s walk in our mind. We will remember three Assam treasures. Ready?",
+      "continueLabel": "I’m ready",
+      "autoCorrect": true,
+      "media": {
+        "kind": "image",
+        "image": "morning.jpg",
+        "caption": "Assam morning"
+      }
+    },
+    {
+      "id": "m1-reg-1",
+      "itemType": "registration_teach",
+      "domain": "registration",
+      "bankItem": "pitha",
+      "promptText": "This is Pitha — an Assamese rice cake.",
+      "spokenPrompt": "This is Pitha. Say Pitha with me.",
+      "continueLabel": "Next",
+      "autoCorrect": true
+    },
+    {
+      "id": "m1-reg-2",
+      "itemType": "registration_teach",
+      "domain": "registration",
+      "bankItem": "brahmaputra",
+      "promptText": "This is the Brahmaputra river.",
+      "spokenPrompt": "This is the Brahmaputra. Say Brahmaputra.",
+      "continueLabel": "Next",
+      "autoCorrect": true
+    },
+    {
+      "id": "m1-reg-3",
+      "itemType": "registration_teach",
+      "domain": "registration",
+      "bankItem": "bihu",
+      "promptText": "This is Bihu — Assam’s festival.",
+      "spokenPrompt": "This is Bihu. Say Bihu.",
+      "continueLabel": "Next",
+      "autoCorrect": true
+    },
+    {
+      "id": "m1-attn",
+      "itemType": "attention_change",
+      "domain": "attention",
+      "promptText": "What disappeared from the table?",
+      "spokenPrompt": "Look at the breakfast table. Now look again. What disappeared?",
+      "expectedAnswers": [
+        "tea cup",
+        "cup",
+        "tea",
+        "chai"
+      ],
+      "chipOptions": [
+        "Tea cup",
+        "Jaapi",
+        "Rice",
+        "Fish"
+      ],
+      "hintText": "The tea cup is missing.",
+      "sceneBefore": [
+        "rice",
+        "fish",
+        "jaapi",
+        "tea_cup",
+        "gamusa"
+      ],
+      "sceneAfter": [
+        "rice",
+        "fish",
+        "jaapi",
+        "gamusa"
+      ],
+      "lookMs": 3500
+    },
+    {
+      "id": "m1-recall-1",
+      "itemType": "recall",
+      "domain": "recall",
+      "promptText": "What rice cake did we learn?",
+      "spokenPrompt": "On our walk — what rice cake did we learn?",
+      "bankItem": "pitha",
+      "chipPool": "registrationSet",
+      "hintText": "It was Pitha."
+    },
+    {
+      "id": "m1-recall-2",
+      "itemType": "recall",
+      "domain": "recall",
+      "promptText": "Which river did we name?",
+      "spokenPrompt": "Which river did we name?",
+      "bankItem": "brahmaputra",
+      "chipPool": "registrationSet",
+      "hintText": "The Brahmaputra."
+    },
+    {
+      "id": "m1-recall-3",
+      "itemType": "recall",
+      "domain": "recall",
+      "promptText": "Which festival did we remember?",
+      "spokenPrompt": "Which festival did we remember?",
+      "bankItem": "bihu",
+      "chipPool": "registrationSet",
+      "hintText": "Bihu."
+    },
+    {
+      "id": "m1-lang",
+      "itemType": "language",
+      "domain": "language",
+      "promptText": "What do we call this morning food?",
+      "spokenPrompt": "What do we call this Assamese morning food — curd with flattened rice?",
+      "bankItem": "doi_chira",
+      "chipOptions": [
+        "Doi-chira",
+        "Pitha",
+        "Masor tenga",
+        "Jaapi"
+      ],
+      "hintText": "Doi-chira, part of jolpan."
+    },
+    {
+      "id": "m1-reason",
+      "itemType": "reasoning",
+      "domain": "reasoning",
+      "promptText": "For breakfast jolpan — which does not belong?",
+      "spokenPrompt": "For breakfast jolpan — which does not belong?",
+      "expectedAnswers": [
+        "bicycle",
+        "cycle",
+        "bike"
+      ],
+      "chipOptions": [
+        "Doi-chira",
+        "Pitha",
+        "Tea",
+        "Bicycle"
+      ],
+      "hintText": "A bicycle is not food.",
+      "media": {
+        "kind": "image",
+        "image": "reasoning.jpg",
+        "caption": "Odd one out"
+      }
+    },
+    {
+      "id": "m1-story-setup",
+      "itemType": "story_beat",
+      "domain": "story",
+      "promptText": "Family Story: Morning jolpan at home",
+      "spokenPrompt": "Now a family story. It is morning. You are at home in Assam. {{family0.label}} made jolpan. Let’s begin.",
+      "continueLabel": "Start story",
+      "autoCorrect": true,
+      "media": {
+        "kind": "family",
+        "index": 0
+      }
+    },
+    {
+      "id": "m1-story-orient",
+      "itemType": "story_quiz",
+      "domain": "orientation",
+      "promptText": "In our story — is it morning or evening?",
+      "spokenPrompt": "In our story — is it morning or evening?",
+      "expectedAnswers": [
+        "morning",
+        "am",
+        "sunrise"
+      ],
+      "chipOptions": [
+        "Morning",
+        "Evening",
+        "Night",
+        "Afternoon"
+      ],
+      "hintText": "It is morning.",
+      "media": {
+        "kind": "image",
+        "image": "morning.jpg",
+        "caption": "Morning light"
+      }
+    },
+    {
+      "id": "m1-story-who",
+      "itemType": "story_quiz",
+      "domain": "language",
+      "promptText": "Who made jolpan with you?",
+      "spokenPrompt": "Who made jolpan with you?",
+      "answerFrom": "family0",
+      "chipPool": "familyLabels",
+      "hintText": "{{family0.label}} made jolpan.",
+      "media": {
+        "kind": "family",
+        "index": 0
+      }
+    },
+    {
+      "id": "m1-story-mem",
+      "itemType": "story_quiz",
+      "domain": "recall",
+      "promptText": "{{family1.label}} went to market for fish. Who went to market?",
+      "spokenPrompt": "{{family1.label}} went to the market for fish. Who went to the market?",
+      "answerFrom": "family1",
+      "chipPool": "familyLabels",
+      "hintText": "{{family1.label}} went to the market.",
+      "media": {
+        "kind": "family",
+        "index": 1
+      }
+    },
+    {
+      "id": "m1-story-attn",
+      "itemType": "attention_change",
+      "domain": "attention",
+      "promptText": "What changed on the jolpan table?",
+      "spokenPrompt": "Look at the table. Now look again. What changed?",
+      "expectedAnswers": [
+        "jaapi",
+        "japi",
+        "hat",
+        "bamboo hat"
+      ],
+      "chipOptions": [
+        "Jaapi moved",
+        "Rice gone",
+        "Fish gone",
+        "Nothing"
+      ],
+      "hintText": "The jaapi moved / changed place.",
+      "sceneBefore": [
+        "doi_chira",
+        "pitha",
+        "tea_cup",
+        "jaapi",
+        "gamusa"
+      ],
+      "sceneAfter": [
+        "doi_chira",
+        "pitha",
+        "tea_cup",
+        "gamusa",
+        "jaapi"
+      ],
+      "changeNote": "jaapi_position",
+      "lookMs": 3500
+    },
+    {
+      "id": "m1-story-lang",
+      "itemType": "story_quiz",
+      "domain": "language",
+      "promptText": "What rice cake is on the table?",
+      "spokenPrompt": "What rice cake is on the table?",
+      "bankItem": "pitha",
+      "chipOptions": [
+        "Pitha",
+        "Doi-chira",
+        "Masor tenga",
+        "Book"
+      ],
+      "hintText": "Pitha."
+    },
+    {
+      "id": "m1-story-reason",
+      "itemType": "story_quiz",
+      "domain": "reasoning",
+      "promptText": "For jolpan — which does not belong?",
+      "spokenPrompt": "Doi-chira, pitha, tea, and a book — which does not belong on the jolpan table?",
+      "expectedAnswers": [
+        "book"
+      ],
+      "chipOptions": [
+        "Doi-chira",
+        "Pitha",
+        "Tea",
+        "Book"
+      ],
+      "hintText": "A book is not for eating.",
+      "media": {
+        "kind": "image",
+        "image": "doi_chira.jpg",
+        "caption": "Jolpan table"
+      }
+    },
+    {
+      "id": "m1-finale",
+      "itemType": "story_beat",
+      "domain": "story",
+      "promptText": "You did wonderful today, {{preferredName}}!",
+      "spokenPrompt": "You did wonderful today, {{preferredName}}. Assam is proud of you. See you this evening.",
+      "continueLabel": "Finish",
+      "autoCorrect": true,
+      "media": {
+        "kind": "image",
+        "image": "morning.jpg",
+        "caption": "Well done"
+      }
+    }
+  ]
+}
