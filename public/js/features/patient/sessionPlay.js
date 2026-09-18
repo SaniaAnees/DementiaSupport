@@ -811,11 +811,15 @@ const SessionPlay = {
         `${label} ${kicker} ${item.promptText || ''}`
       );
 
+    const cap = item.caption || '';
+    const showCaption =
+      cap && !String(item.promptText || '').toLowerCase().includes(String(cap).toLowerCase());
+
     return `
       <div class="session-screen">
         ${this.renderMedia(item)}
         <div class="prompt-text">${item.promptText}</div>
-        <div class="caption-text">${item.caption || ''}</div>
+        ${showCaption ? `<div class="caption-text">${cap}</div>` : ''}
         <button type="button" class="story-cta ${isStory ? 'story-cta--featured' : ''}" onclick="SessionPlay.continueItem()">
           <span class="story-cta-kicker">${kicker}</span>
           <span class="story-cta-row">
@@ -1022,7 +1026,7 @@ const SessionPlay = {
       ...(raw.expectedAnswers || []),
       ...(raw.chipOptions || []),
     ]);
-    return grading.match || grading.score >= 0.4;
+    return grading.match || grading.score >= 0.35;
   },
 
   async rejectUnclearAndListen() {

@@ -190,8 +190,12 @@
   padding: 0.5rem 0 0;
   border: none;
   background: transparent;
-  cursor: pointer;
+  cursor: default;
   color: rgba(247, 244, 238, 0.55);
+}
+
+.ph-mic-btn.ph-mic-status {
+  pointer-events: none;
 }
 
 .ph-mic-ring {
