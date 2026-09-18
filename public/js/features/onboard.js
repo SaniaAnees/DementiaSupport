@@ -51,9 +51,24 @@ window.OnboardFlow = {
     this.showStep('onboard-welcome');
   },
 
+  /** Prefer Continue button — timer kept only as unused fallback */
   armWelcomeTimer() {
+    this.armWelcomeContinue();
+  },
+
+  armWelcomeContinue() {
     this.clearWelcomeTimer();
-    this._welcomeTimer = window.setTimeout(() => this.showProfiles(), this.WELCOME_MS);
+    const btn = document.getElementById('ob-welcome-continue');
+    if (!btn) {
+      // Legacy markup: soft auto-advance after a long pause
+      this._welcomeTimer = window.setTimeout(() => this.showProfiles(), 6000);
+      return;
+    }
+    const next = () => {
+      btn.removeEventListener('click', next);
+      this.showProfiles();
+    };
+    btn.addEventListener('click', next, { once: true });
   },
 
   clearWelcomeTimer() {
@@ -70,7 +85,7 @@ window.OnboardFlow = {
     gate?.classList.remove('is-visible');
     void gate?.offsetWidth;
     requestAnimationFrame(() => gate?.classList.add('is-visible'));
-    this.armWelcomeTimer();
+    this.armWelcomeContinue();
   },
 
   hide() {

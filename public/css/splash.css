@@ -13,6 +13,34 @@
   animation: splashWelcomeIn 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
+.splash-screen.is-ready {
+  cursor: pointer;
+}
+
+.splash-screen.is-ready::after {
+  content: 'Tap to continue';
+  position: absolute;
+  left: 50%;
+  bottom: max(1.75rem, env(safe-area-inset-bottom, 0px) + 1rem);
+  transform: translateX(-50%);
+  z-index: 2;
+  padding: 0.55rem 1.1rem;
+  border-radius: 999px;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 0.92rem;
+  letter-spacing: 0.02em;
+  color: #f7f4ee;
+  background: rgba(26, 28, 24, 0.55);
+  backdrop-filter: blur(6px);
+  pointer-events: none;
+  animation: splashHintIn 0.5s ease 0.35s both;
+}
+
+@keyframes splashHintIn {
+  from { opacity: 0; transform: translateX(-50%) translateY(8px); }
+  to { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
 .splash-screen.splash-exit {
   animation: none;
   opacity: 0;

@@ -1,5 +1,5 @@
 // Service Worker — offline-first, cache API responses
-const CACHE_NAME = 'mindcare-v78-voice-always';
+const CACHE_NAME = 'mindcare-v79-welcome-hold';
 const ASSETS = [
   '/',
   '/index.html',
@@ -54,8 +54,11 @@ const ASSETS = [
 ];
 
 self.addEventListener('install', (event) => {
+  // Cache in the background — don't fail install if one asset 404s
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS))
+    caches.open(CACHE_NAME).then((cache) =>
+      Promise.all(ASSETS.map((url) => cache.add(url).catch(() => undefined)))
+    )
   );
   self.skipWaiting();
 });
