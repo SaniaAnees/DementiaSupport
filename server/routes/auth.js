@@ -1,5 +1,6 @@
 const express = require('express');
-const bcrypt = require('bcrypt');
+// bcryptjs is pure JS — native `bcrypt` segfaults on some Railway images
+const bcrypt = require('bcryptjs');
 const db = require('../db');
 const { sendOtp, verifyOtp, isConfigured } = require('../twilio');
 const { signToken, authMiddleware } = require('../middleware/auth');
@@ -91,7 +92,7 @@ router.post('/pin/set', authMiddleware, async (req, res) => {
   }
 
   try {
-    const pinHash = await bcrypt.hash(pin, 10);
+    const pinHash = bcrypt.hashSync(pin, 10);
     await db.query('UPDATE caregivers SET pin_hash = $1 WHERE id = $2', [pinHash, req.caregiverId]);
     res.json({ success: true });
   } catch (err) {
@@ -111,7 +112,7 @@ router.post('/pin/verify', authMiddleware, async (req, res) => {
     if (!caregiver?.pin_hash) {
       return res.status(400).json({ error: 'No PIN set' });
     }
-    const valid = await bcrypt.compare(pin, caregiver.pin_hash);
+    const valid = bcrypt.compareSync(pin, caregiver.pin_hash);
     if (!valid) return res.status(401).json({ error: 'Invalid PIN' });
     res.json({ success: true });
   } catch (err) {

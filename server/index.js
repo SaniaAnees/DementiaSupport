@@ -1,4 +1,7 @@
 require('dotenv').config();
+
+console.log('MindCare boot: node', process.version, 'port', process.env.PORT || 3000);
+
 const express = require('express');
 const cors = require('cors');
 const path = require('path');

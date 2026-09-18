@@ -176,27 +176,30 @@ function normalizeSql(sql) {
     .replace(/\bnow\(\)/gi, "strftime('%Y-%m-%dT%H:%M:%fZ','now')");
 }
 
+function isCloudHost() {
+  return !!(
+    process.env.RAILWAY_ENVIRONMENT ||
+    process.env.RAILWAY_PROJECT_ID ||
+    process.env.RENDER ||
+    process.env.FLY_APP_NAME
+  );
+}
+
 /**
- * Probe DATABASE_URL. If Postgres is down / unreachable, fall back to SQLite
- * so demo OTP and local PWA keep working.
- * On Railway, prefer a linked Postgres plugin (DATABASE_URL) over ephemeral SQLite.
+ * Probe DATABASE_URL. Locally: Postgres if set, else SQLite.
+ * On Railway/Render/Fly: Postgres only — never load better-sqlite3 (native segfault risk).
  */
 async function ready() {
-  const onRailway = !!(process.env.RAILWAY_ENVIRONMENT || process.env.RAILWAY_PROJECT_ID);
+  const cloud = isCloudHost();
 
   if (!process.env.DATABASE_URL) {
-    try {
-      initSQLite();
-      return engine;
-    } catch (err) {
-      console.error('SQLite init failed:', err.message || err);
-      if (onRailway) {
-        throw new Error(
-          'No DATABASE_URL and SQLite failed. Add a Postgres plugin on Railway and set DATABASE_URL.'
-        );
-      }
-      throw err;
+    if (cloud) {
+      throw new Error(
+        'DATABASE_URL is missing. On the app service Variables, add a reference to Postgres DATABASE_URL, then redeploy.'
+      );
     }
+    initSQLite();
+    return engine;
   }
 
   try {
@@ -214,21 +217,20 @@ async function ready() {
     return engine;
   } catch (err) {
     const why = err.code || err.message || 'unknown';
+    if (cloud) {
+      throw new Error(
+        'PostgreSQL unavailable on cloud (' +
+          why +
+          '). Check Postgres is Running and DATABASE_URL is linked to this service.'
+      );
+    }
     console.warn('PostgreSQL unavailable (' + why + ') — using SQLite fallback');
     try {
       await pool?.end?.();
     } catch (_) {}
     pool = null;
-    try {
-      initSQLite();
-      return engine;
-    } catch (sqliteErr) {
-      console.error('SQLite fallback failed:', sqliteErr.message || sqliteErr);
-      throw new Error(
-        'Database unavailable. On Railway: add Postgres, wait until it is Running, then redeploy. Detail: ' +
-          why
-      );
-    }
+    initSQLite();
+    return engine;
   }
 }
 
