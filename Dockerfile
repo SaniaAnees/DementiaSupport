@@ -11,7 +11,9 @@ COPY public ./public
 
 ENV NODE_ENV=production
 ENV HOST=0.0.0.0
+ENV PORT=8080
 
-EXPOSE 3000
+# Must match Railway public networking target port (app reads process.env.PORT).
+EXPOSE 8080
 
 CMD ["node", "server/index.js"]
