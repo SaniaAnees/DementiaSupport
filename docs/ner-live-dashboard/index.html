@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en-IN">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Northeast Dementia — Live Microsoft-style Dashboard</title>
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+<style>
+:root {
+  --blue:#0078D4; --blue2:#005A9E; --blue3:#DEECF9;
+  --orange:#D83B01; --green:#107C10; --gray:#605E5C; --gray2:#8A8886;
+  --bg:#F3F2F1; --card:#fff; --border:#E1DFDD; --text:#252423;
+  --shadow:0 1.6px 3.6px rgba(0,0,0,.13), 0 .3px .9px rgba(0,0,0,.11);
+}
+* { box-sizing:border-box; }
+body { margin:0; font-family:"Segoe UI",system-ui,sans-serif; background:var(--bg); color:var(--text); }
+.titlebar { background:linear-gradient(180deg,#0078D4,#006CBD); color:#fff; padding:10px 20px 0; box-shadow:var(--shadow); }
+.titlebar h1 { margin:0; font-size:18px; font-weight:600; }
+.titlebar .sub { font-size:12px; opacity:.92; margin:4px 0 10px; }
+.ribbon { display:flex; gap:8px; flex-wrap:wrap; padding-bottom:10px; align-items:center; }
+.ribbon button { background:rgba(255,255,255,.18); border:1px solid rgba(255,255,255,.35); color:#fff; border-radius:2px; padding:6px 12px; font:600 12px "Segoe UI"; cursor:pointer; }
+.ribbon button:hover { background:rgba(255,255,255,.28); }
+.ribbon button.active { background:#fff; color:var(--blue2); }
+.pill { margin-left:auto; font-size:11px; background:rgba(255,255,255,.18); border:1px solid rgba(255,255,255,.35); padding:6px 10px; border-radius:2px; }
+.wrap { max-width:1280px; margin:0 auto; padding:16px; display:grid; grid-template-columns:1.15fr 1fr; gap:14px; }
+@media(max-width:980px){ .wrap { grid-template-columns:1fr; } }
+.kpi-row { grid-column:1/-1; display:grid; grid-template-columns:repeat(4,1fr); gap:12px; }
+@media(max-width:800px){ .kpi-row { grid-template-columns:1fr 1fr; } }
+.kpi { background:var(--card); border:1px solid var(--border); border-left:4px solid var(--blue); box-shadow:var(--shadow); padding:12px 14px; }
+.kpi.orange { border-left-color:var(--orange); }
+.kpi.green { border-left-color:var(--green); }
+.kpi.gray { border-left-color:var(--gray2); }
+.kpi .label { font-size:11px; color:var(--gray); text-transform:uppercase; letter-spacing:.4px; }
+.kpi .value { font-size:26px; font-weight:700; margin-top:2px; }
+.kpi .delta { font-size:12px; color:var(--gray); margin-top:2px; }
+.card { background:var(--card); border:1px solid var(--border); border-radius:2px; box-shadow:var(--shadow); padding:12px 14px 10px; }
+.card h2 { margin:0 0 4px; font-size:14px; font-weight:600; display:flex; gap:8px; align-items:center; }
+.tag { font-size:10px; font-weight:600; background:var(--blue3); color:var(--blue2); padding:2px 6px; border-radius:2px; }
+.hint { font-size:11px; color:var(--gray); margin:0 0 8px; }
+#mapSvg { width:100%; height:auto; background:#FAF9F8; border:1px solid var(--border); }
+.state-path { stroke:#fff; stroke-width:2; cursor:pointer; transition:filter .15s; }
+.state-path:hover { filter:brightness(1.08); stroke:#0078D4; stroke-width:3; }
+.state-path.active { stroke:#005A9E; stroke-width:3.5; }
+.state-path.gap { stroke-dasharray:4 3; }
+.map-label { font-size:11px; font-weight:600; fill:#201F1E; pointer-events:none; text-anchor:middle; font-family:"Segoe UI",sans-serif; }
+.map-label.small { font-size:10px; }
+.legend { display:flex; gap:10px; flex-wrap:wrap; margin-top:8px; font-size:11px; color:var(--gray); }
+.swatch { width:14px; height:10px; display:inline-block; vertical-align:middle; margin-right:4px; border-radius:1px; }
+#detail .name { font-size:18px; font-weight:700; margin:0; }
+#detail .meta { color:var(--gray); font-size:12px; margin:4px 0 10px; }
+.statgrid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+.statbox { background:#F3F2F1; border-radius:2px; padding:8px 10px; }
+.statbox b { display:block; font-size:16px; margin-top:2px; }
+.statbox span { font-size:11px; color:var(--gray); }
+.year-row { display:flex; align-items:center; gap:10px; margin:8px 0 4px; font-size:12px; }
+input[type=range] { flex:1; accent-color:var(--blue); }
+.chart { width:100%; height:320px; }
+.span2 { grid-column:1/-1; }
+.footer { grid-column:1/-1; font-size:11px; color:var(--gray); padding:4px 2px 18px; }
+</style>
+</head>
+<body>
+<div class="titlebar">
+  <h1>Dementia in India's Northeast — Live interactive dashboard</h1>
+  <div class="sub">Microsoft Office / Power BI look · Hover &amp; click · Year toggle · GIS-style map · Published numbers only (Lee 2023 · Jin 2023)</div>
+  <div class="ribbon">
+    <button type="button" class="active" data-view="overview">Overview</button>
+    <button type="button" data-view="map">GIS-style map</button>
+    <button type="button" data-view="trend">2016 → 2036 trend</button>
+    <button type="button" data-view="assam">Assam deep dive</button>
+    <span class="pill">Live · Interactive · Open in any browser</span>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="kpi-row">
+    <div class="kpi"><div class="label">Assam rate (modelled)</div><div class="value">10.4%</div><div class="delta">ages 60+ · Jin 2023</div></div>
+    <div class="kpi orange"><div class="label">People in Assam</div><div class="value" id="kpiPeople">201k</div><div class="delta" id="kpiPeopleSub">2016 · Lee 2023</div></div>
+    <div class="kpi green"><div class="label">Northeast total</div><div class="value" id="kpiNE">284k</div><div class="delta" id="kpiNESub">2016 · Assam + other NE</div></div>
+    <div class="kpi gray"><div class="label">Sikkim published rate</div><div class="value">Gap</div><div class="delta">not in Lee / Jin tables</div></div>
+  </div>
+
+  <div class="card" id="panelMap">
+    <h2>GIS-style Northeast map <span class="tag">Click a state</span></h2>
+    <p class="hint">Schematic map for briefing (not official Survey of India boundaries). Darker blue = higher modelled dementia rate. Click any state.</p>
+    <svg id="mapSvg" viewBox="0 0 800 640" role="img" aria-label="Interactive Northeast dementia map"></svg>
+    <div class="legend" id="mapLegend"></div>
+  </div>
+
+  <div class="card" id="panelDetail">
+    <h2>Live state detail <span class="tag">Updates on click / hover</span></h2>
+    <div id="detail"><p class="name">Click a state on the map</p><p class="meta">Or hover a bar in the chart.</p></div>
+    <div class="year-row">
+      <strong>Year:</strong><span>2016</span>
+      <input id="yearSlider" type="range" min="2016" max="2036" step="20" value="2016"/>
+      <span>2036</span><strong id="yearLabel" style="color:#0078D4">2016</strong>
+    </div>
+    <p class="hint">Slider switches Assam and “other Northeast” headcounts between Lee 2023 estimate (2016) and projection (2036).</p>
+  </div>
+
+  <div class="card" id="panelBars">
+    <h2>State comparison <span class="tag">Hover for confidence range</span></h2>
+    <p class="hint">Age-standardised dementia % (Jin 2023). Orange dashed line = India ~7.4% (Lee 2023).</p>
+    <div id="barChart" class="chart"></div>
+  </div>
+
+  <div class="card" id="panelTrend">
+    <h2>People living with dementia over time <span class="tag">Interactive</span></h2>
+    <p class="hint">Lee 2023 Assam and other-Northeast headcounts. Hover for exact thousands.</p>
+    <div id="trendChart" class="chart"></div>
+  </div>
+
+  <div class="card span2" id="panelAssam">
+    <h2>Assam field screens <span class="tag">Tool choice matters</span></h2>
+    <p class="hint">Community screens — not the same as modelled state %. Same Guwahati sample: EDQ 11.25% vs HMMSE 1.25%.</p>
+    <div id="assamChart" class="chart" style="height:300px"></div>
+  </div>
+
+  <div class="footer">
+    Sources: Lee et al. 2023 (national dementia study on India’s ageing survey) · Jin et al. 2023 (state modelling) · Saikia 2018 · Saikia &amp; Rajendran 2020 · Ali et al. Sonitpur.
+    Map shapes are schematic for interaction (Power BI / Office briefing style). Hospital EMR is not public and is not invented.
+  </div>
+</div>
+
+<script>
+const DATA = {"states": [{"id": "AS", "name": "Assam", "prev": 10.41, "lo": 8.16, "hi": 12.66, "p2016": 201, "p2036": 456, "lee_prev": 8.47, "note": "Most local field studies in the Northeast sit here (Guwahati, Sonitpur)."}, {"id": "TR", "name": "Tripura", "prev": 9.05, "lo": 6.05, "hi": 12.06, "p2016": null, "p2036": null, "lee_prev": null, "note": "Modelled rate only; rural cognition cohort (SMRUTHI) is running."}, {"id": "MZ", "name": "Mizoram", "prev": 8.89, "lo": 5.75, "hi": 12.02, "p2016": null, "p2036": null, "lee_prev": null, "note": "Strong ARDSI / Memory Walk community work; little local prevalence fieldwork."}, {"id": "AR", "name": "Arunachal Pradesh", "prev": 8.45, "lo": 4.85, "hi": 12.06, "p2016": null, "p2036": null, "lee_prev": null, "note": "Modelled rate; no standalone community dementia survey found."}, {"id": "ML", "name": "Meghalaya", "prev": 8.43, "lo": 5.59, "hi": 11.26, "p2016": null, "p2036": null, "lee_prev": null, "note": "NEIGRIHMS neurobehavior clinic in Shillong; scarce local prevalence papers."}, {"id": "MN", "name": "Manipur", "prev": 5.11, "lo": 3.33, "hi": 6.89, "p2016": null, "p2036": null, "lee_prev": null, "note": "Below India average in modelling; RIMS/JNIMS contacts; thin published series."}, {"id": "NL", "name": "Nagaland", "prev": 4.54, "lo": 2.91, "hi": 6.18, "p2016": null, "p2036": null, "lee_prev": null, "note": "Lowest modelled Northeast rate; Noklak screening news; no peer-reviewed prevalence paper."}, {"id": "SK", "name": "Sikkim", "prev": null, "lo": null, "hi": null, "p2016": null, "p2036": null, "lee_prev": null, "note": "DATA GAP: not listed in Lee/Jin state dementia tables."}], "map_shapes": {"AR": "M420,40 L560,60 L620,140 L580,220 L480,240 L400,180 L380,100 Z", "AS": "M280,200 L480,240 L520,300 L480,360 L320,380 L220,340 L200,260 Z", "NL": "M520,300 L600,280 L640,340 L600,400 L520,390 L500,340 Z", "MN": "M500,390 L580,400 L590,480 L520,510 L470,470 L480,410 Z", "MZ": "M470,480 L520,510 L500,580 L440,600 L410,540 L430,490 Z", "TR": "M360,420 L430,430 L440,490 L400,520 L340,500 L330,450 Z", "ML": "M220,340 L320,360 L340,420 L280,450 L200,420 L180,360 Z", "SK": "M300,80 L360,70 L380,110 L340,140 L290,120 Z"}, "labels_xy": {"AR": [500, 140], "AS": [350, 300], "NL": [575, 345], "MN": [535, 455], "MZ": [465, 545], "TR": [385, 470], "ML": [255, 395], "SK": [335, 100]}};
+let selected = 'AS';
+let year = 2016;
+
+function colorFor(prev) {
+  if (prev == null) return '#C8C6C4';
+  if (prev >= 9) return '#005A9E';
+  if (prev >= 7.4) return '#0078D4';
+  if (prev >= 5) return '#50A0E0';
+  return '#F2C811';
+}
+function stateById(id) { return DATA.states.find(s => s.id === id); }
+
+function renderMap() {
+  const svg = document.getElementById('mapSvg');
+  let html = '<rect width="800" height="640" fill="#FAF9F8"/>';
+  html += '<text x="20" y="28" font-size="13" font-weight="600" fill="#252423" font-family="Segoe UI">Northeast — schematic interactive map</text>';
+  html += '<text x="20" y="48" font-size="11" fill="#605E5C" font-family="Segoe UI">Darker blue = higher modelled dementia rate (ages 60+)</text>';
+  for (const [id, d] of Object.entries(DATA.map_shapes)) {
+    const s = stateById(id);
+    const fill = colorFor(s.prev);
+    const gap = s.prev == null ? ' gap' : '';
+    html += '<path class="state-path' + gap + '" data-id="' + id + '" d="' + d + '" fill="' + fill + '"></path>';
+  }
+  for (const [id, xy] of Object.entries(DATA.labels_xy)) {
+    const s = stateById(id);
+    const line1 = s.name;
+    const line2 = s.prev == null ? '(no rate)' : (s.prev.toFixed(1) + '%');
+    html += '<text class="map-label" x="' + xy[0] + '" y="' + xy[1] + '">' + line1 + '</text>';
+    html += '<text class="map-label small" x="' + xy[0] + '" y="' + (xy[1] + 14) + '">' + line2 + '</text>';
+  }
+  svg.innerHTML = html;
+  svg.querySelectorAll('.state-path').forEach(p => {
+    p.addEventListener('mouseenter', () => showDetail(p.dataset.id, false));
+    p.addEventListener('click', () => showDetail(p.dataset.id, true));
+  });
+  document.getElementById('mapLegend').innerHTML =
+    '<span><i class="swatch" style="background:#005A9E"></i>≥ 9%</span>' +
+    '<span><i class="swatch" style="background:#0078D4"></i>7.4–9% (above India)</span>' +
+    '<span><i class="swatch" style="background:#50A0E0"></i>5–7.4%</span>' +
+    '<span><i class="swatch" style="background:#F2C811"></i>&lt; 5%</span>' +
+    '<span><i class="swatch" style="background:#C8C6C4"></i>No published rate</span>' +
+    '<span style="margin-left:6px">India average ~7.4% (Lee 2023)</span>';
+}
+
+function showDetail(id, pin) {
+  const s = stateById(id);
+  if (!s) return;
+  if (pin) {
+    selected = id;
+    document.querySelectorAll('.state-path').forEach(p => p.classList.toggle('active', p.dataset.id === id));
+  }
+  const prevTxt = s.prev == null ? 'No published rate' : s.prev.toFixed(2) + '%';
+  const ci = s.prev == null ? '—' : (s.lo.toFixed(2) + ' – ' + s.hi.toFixed(2) + '%');
+  let people = 'Not published as a separate Lee headcount';
+  if (s.id === 'AS') people = (year === 2016 ? s.p2016 : s.p2036) + ',000 people (Lee 2023)';
+  const lee = s.lee_prev != null ? (s.lee_prev.toFixed(2) + '% (Lee state row)') : 'In NE aggregate / not separate';
+  document.getElementById('detail').innerHTML =
+    '<p class="name">' + s.name + '</p>' +
+    '<p class="meta">' + s.note + '</p>' +
+    '<div class="statgrid">' +
+      '<div class="statbox"><span>Modelled rate (Jin 2023)</span><b>' + prevTxt + '</b></div>' +
+      '<div class="statbox"><span>95% confidence range</span><b style="font-size:15px">' + ci + '</b></div>' +
+      '<div class="statbox"><span>People (Lee, if available)</span><b style="font-size:14px">' + people + '</b></div>' +
+      '<div class="statbox"><span>Other Lee figure</span><b style="font-size:14px">' + lee + '</b></div>' +
+    '</div>';
+}
+
+function updateKPIs() {
+  const assam = stateById('AS');
+  const people = year === 2016 ? assam.p2016 : assam.p2036;
+  const other = year === 2016 ? 83 : 199;
+  document.getElementById('kpiPeople').textContent = people + 'k';
+  document.getElementById('kpiPeopleSub').textContent = year + ' · Lee 2023';
+  document.getElementById('kpiNE').textContent = (people + other) + 'k';
+  document.getElementById('kpiNESub').textContent = year + ' · Assam + other NE';
+  document.getElementById('yearLabel').textContent = year;
+  showDetail(selected, true);
+  drawTrend();
+}
+
+function drawBars() {
+  const ordered = DATA.states.slice().reverse();
+  const trace = {
+    type:'bar', orientation:'h',
+    y: ordered.map(s => s.name),
+    x: ordered.map(s => s.prev),
+    text: ordered.map(s => s.prev == null ? 'Data gap' : s.prev.toFixed(2) + '%'),
+    textposition:'outside',
+    marker: { color: ordered.map(s => colorFor(s.prev)), line: { color:'#fff', width:1 } },
+    hovertext: ordered.map(s => s.prev == null ? (s.name + '<br>No published Jin 2023 rate<br>' + s.note)
+      : (s.name + '<br>Rate: ' + s.prev + '%<br>95% range: ' + s.lo + '% – ' + s.hi + '%<br>' + s.note)),
+    hoverinfo:'text'
+  };
+  const layout = {
+    margin:{l:130,r:50,t:10,b:40}, paper_bgcolor:'#fff', plot_bgcolor:'#fff',
+    xaxis:{ title:'Age-standardised dementia % (ages 60+)', range:[0,14], gridcolor:'#E1DFDD', zeroline:false },
+    yaxis:{ automargin:true },
+    shapes:[{ type:'line', x0:7.4, x1:7.4, y0:-0.5, y1:7.5, line:{ color:'#D83B01', width:2, dash:'dash' } }],
+    annotations:[{ x:7.4, y:1.02, xref:'x', yref:'paper', text:'India ~7.4%', showarrow:false, font:{ size:11, color:'#D83B01' } }],
+    font:{ family:'Segoe UI', size:12, color:'#252423' }
+  };
+  Plotly.newPlot('barChart', [trace], layout, { responsive:true, displayModeBar:true, modeBarButtonsToRemove:['lasso2d','select2d'] });
+  const el = document.getElementById('barChart');
+  el.on('plotly_hover', (ev) => {
+    const s = DATA.states.find(x => x.name === ev.points[0].y);
+    if (s) showDetail(s.id, false);
+  });
+  el.on('plotly_click', (ev) => {
+    const s = DATA.states.find(x => x.name === ev.points[0].y);
+    if (s) showDetail(s.id, true);
+  });
+}
+
+function drawTrend() {
+  const traces = [
+    { x:[2016,2036], y:[201,456], name:'Assam', mode:'lines+markers+text', text:['201k','456k'], textposition:'top center',
+      line:{ color:'#0078D4', width:3 }, marker:{ size:11 },
+      hovertemplate:'Assam %{x}: %{y} thousand people<extra></extra>' },
+    { x:[2016,2036], y:[83,199], name:'Other NE (excl. Assam)', mode:'lines+markers+text', text:['83k','199k'], textposition:'top center',
+      line:{ color:'#D83B01', width:3 }, marker:{ size:11 },
+      hovertemplate:'Other NE %{x}: %{y} thousand<extra></extra>' },
+    { x:[2016,2036], y:[284,655], name:'NE total', mode:'lines+markers',
+      line:{ color:'#107C10', width:2, dash:'dot' }, marker:{ size:9 },
+      hovertemplate:'NE total %{x}: %{y}k<extra></extra>' }
+  ];
+  const layout = {
+    margin:{l:55,r:20,t:30,b:40}, paper_bgcolor:'#fff', plot_bgcolor:'#fff',
+    xaxis:{ tickmode:'array', tickvals:[2016,2036], title:'Year', gridcolor:'#E1DFDD' },
+    yaxis:{ title:'People (thousands)', gridcolor:'#E1DFDD', rangemode:'tozero' },
+    legend:{ orientation:'h', y:1.15 },
+    shapes:[{ type:'line', x0:year, x1:year, y0:0, y1:700, line:{ color:'#8A8886', width:1, dash:'dot' } }],
+    font:{ family:'Segoe UI', size:12 }
+  };
+  Plotly.newPlot('trendChart', traces, layout, { responsive:true, displayModeBar:true });
+}
+
+function drawAssam() {
+  const labels = ['Guwahati 2013\nEDQ screen', 'Guwahati 2013\nHMMSE screen', 'Guwahati 2018-19\nMCI', 'Sonitpur\nmild CI', 'Sonitpur\nmoderate CI'];
+  const vals = [11.25, 1.25, 22.4, 35.0, 30.7];
+  const colors = ['#0078D4','#0078D4','#D83B01','#8764B8','#8764B8'];
+  const hover = [
+    'EDQ dementia screen · n=400 · Saikia 2018',
+    'HMMSE dementia screen · same sample · Saikia 2018',
+    'Mild cognitive impairment · n=576 · Saikia & Rajendran 2020',
+    'Mild cognitive impairment band · Ali et al. Sonitpur',
+    'Moderate cognitive impairment band · Ali et al. Sonitpur'
+  ];
+  Plotly.newPlot('assamChart', [{
+    type:'bar', x:labels, y:vals, marker:{ color:colors },
+    text: vals.map(v => v + '%'), textposition:'outside',
+    hovertext:hover, hoverinfo:'text'
+  }], {
+    margin:{l:40,r:20,t:10,b:80}, paper_bgcolor:'#fff', plot_bgcolor:'#fff',
+    yaxis:{ title:'% screen-positive', gridcolor:'#E1DFDD', range:[0,42] },
+    font:{ family:'Segoe UI', size:11 }
+  }, { responsive:true });
+}
+
+document.getElementById('yearSlider').addEventListener('input', (e) => {
+  year = Number(e.target.value);
+  updateKPIs();
+});
+
+document.querySelectorAll('.ribbon button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.ribbon button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const v = btn.dataset.view;
+    const map = document.getElementById('panelMap');
+    const detail = document.getElementById('panelDetail');
+    const bars = document.getElementById('panelBars');
+    const trend = document.getElementById('panelTrend');
+    const assam = document.getElementById('panelAssam');
+    [map, detail, bars, trend, assam].forEach(el => el.style.display = '');
+    if (v === 'map') { bars.style.display = 'none'; trend.style.display = 'none'; assam.style.display = 'none'; }
+    if (v === 'trend') { map.style.display = 'none'; bars.style.display = 'none'; assam.style.display = 'none'; }
+    if (v === 'assam') { map.style.display = 'none'; bars.style.display = 'none'; trend.style.display = 'none'; }
+  });
+});
+
+renderMap();
+drawBars();
+drawTrend();
+drawAssam();
+updateKPIs();
+</script>
+</body>
+</html>
